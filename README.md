@@ -4,6 +4,8 @@
 
 一个 Windows 桌面悬浮窗应用，在上课时默默运行在屏幕角落。通过实时语音识别监听课堂内容，当检测到「点名」「随机提问」等关键词时，立刻弹出红色警报并提供 AI 救场答案。课后还能自动生成结构化笔记。
 
+> “Agent老师没做出来，Agent学生倒先做出来了！” — 来自内测群的反馈
+
 ## ✨ 核心功能
 
 | 功能 | 说明 |
@@ -168,7 +170,9 @@ ClassAssistant/
 ├── data/                       # 运行时数据 (不提交到 Git)
 │   └── keywords.txt            # 监控关键词配置（可编辑）
 ├── docs/                       # 开发文档
-├── dev.bat                     # 一键启动脚本
+├── build.ps1                   # 一键打包脚本 (PowerShell)
+├── build.bat                   # 打包入口 (build.bat v1.0.0)
+├── dev.bat                     # 一键启动开发模式
 └── README.md
 ```
 
@@ -204,14 +208,14 @@ ClassAssistant/
 
 ### 1. 下载发布包
 
-从 [GitHub Releases](https://github.com/ouyangyipeng/ClassAssistant/releases) 下载最新的 `ClassAssistant-v0.1.0-win-x64.zip`。
+从 [GitHub Releases](https://github.com/ouyangyipeng/ClassAssistant/releases) 下载最新的 `ClassAssistant-vX.X.X-win-x64.zip`。
 
 ### 2. 解压
 
 将 zip 解压到任意目录，得到以下结构：
 
 ```
-ClassAssistant-v0.1.0/
+ClassAssistant-vX.X.X/
 ├── 启动.bat                     # 双击启动
 ├── 上课摸鱼搭子.exe              # 前端桌面窗口
 ├── backend/                     # 后端服务
@@ -244,8 +248,9 @@ LLM_MODEL=deepseek-chat
 ### 4. 启动
 
 双击 **`启动.bat`**，它会：
-1. 自动启动后端服务（黑色命令行窗口）
+1. 自动启动后端服务（无窗口，后台运行）
 2. 等待 3 秒后启动前端桌面悬浮窗
+3. 启动脚本自身自动退出，不留多余窗口
 
 ### 5. 使用
 
@@ -259,10 +264,11 @@ LLM_MODEL=deepseek-chat
 
 | 问题 | 解决方案 |
 |------|----------|
-| 后端窗口闪退 | 检查 `backend/.env` 是否正确配置 |
+| 后端异常退出 | 在 `backend/` 目录手动运行 `class-assistant-backend.exe` 查看错误信息 |
 | 无法录音 | Windows 设置 → 隐私 → 麦克风 → 允许应用访问 |
 | 前端窗口不出现 | 检查后端是否已启动（浏览器访问 http://127.0.0.1:8765/docs） |
 | 杀毒软件拦截 | exe 是 PyInstaller/Tauri 打包产物，添加信任即可 |
+| libfribidi-0.DLL 错误 | 系统安装了 tesseract 且 DLL 损坏；启动脚本已自动处理，手动运行时可临时移除 tesseract 的 PATH |
 
 ## ⚠️ 注意事项
 
