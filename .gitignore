@@ -3,12 +3,20 @@
 # Python virtual environments
 .venv/
 .venv-docs/
+api-service/.venv/
 __pycache__/
 *.pyc
 *.pyo
 
 # Temporary build output
 pages-dist/
+app-ui/dist/
+app-ui/node_modules/
+app-ui/.vite/
+app-ui/src-tauri/target/
+
+# Local runtime leftovers
+data/_dev_backend.log
 
 # Local editor files
 .vscode/
