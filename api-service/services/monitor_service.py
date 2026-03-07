@@ -71,6 +71,67 @@ class MonitorService:
         # ASR 增量文本追踪
         self._last_asr_text: str = ""
 
+    def _is_sentence_closed(self, text: str) -> bool:
+        return bool(re.search(r"[。！？!?；;……]$", text.strip()))
+
+    def _seconds_between_timestamps(self, earlier: str, later: str) -> float | None:
+        try:
+            start = datetime.strptime(earlier, "%H:%M:%S")
+            end = datetime.strptime(later, "%H:%M:%S")
+        except ValueError:
+            return None
+
+        delta = (end - start).total_seconds()
+        if delta < 0:
+            delta += 24 * 60 * 60
+        return delta
+
+    def _replace_last_entry_locked(self, timestamp: str, text: str):
+        if self._recent_entries:
+            self._recent_entries[-1] = (timestamp, text)
+        if self._summary_source_entries:
+            self._summary_source_entries[-1] = (timestamp, text)
+
+        dedupe_text = self._normalize_for_dedupe(text)
+        if dedupe_text:
+            if self._recent_normalized_entries:
+                self._recent_normalized_entries[-1] = dedupe_text
+            else:
+                self._recent_normalized_entries.append(dedupe_text)
+
+    def _append_or_merge_local_entry_locked(self, timestamp: str, text: str) -> tuple[bool, str]:
+        cleaned = self._normalize_text(text)
+        if not cleaned or not self._is_meaningful_text(cleaned):
+            return False, ""
+
+        if not self._summary_source_entries:
+            return self._append_entry_locked(timestamp, cleaned), cleaned
+
+        last_timestamp, last_text = self._summary_source_entries[-1]
+        previous = self._normalize_text(last_text)
+        if not previous:
+            return self._append_entry_locked(timestamp, cleaned), cleaned
+
+        gap_seconds = self._seconds_between_timestamps(last_timestamp, timestamp)
+        can_try_merge = gap_seconds is not None and gap_seconds <= 3
+        merged_text = ""
+
+        if can_try_merge:
+            if cleaned.startswith(previous) and len(cleaned) > len(previous):
+                merged_text = cleaned
+            elif (
+                len(previous) <= 4
+                or not self._is_sentence_closed(previous)
+            ) and not self._is_near_duplicate_locked(cleaned):
+                merged_text = f"{previous}{cleaned}".strip()
+
+        if merged_text and self._is_meaningful_text(merged_text):
+            self._replace_last_entry_locked(timestamp, merged_text)
+            return True, merged_text
+
+        appended = self._append_entry_locked(timestamp, cleaned)
+        return appended, cleaned if appended else ""
+
     def get_all_keywords(self) -> List[str]:
         """获取所有关键词（内置 + 自定义）"""
         return self.builtin_keywords + self.custom_keywords
@@ -335,10 +396,6 @@ class MonitorService:
             self._recent_normalized_entries = self._recent_normalized_entries[-12:]
         return True
 
-    def _recent_keyword_window_locked(self) -> str:
-        recent_text = [text for _, text in self._recent_entries[-2:]]
-        return " ".join(recent_text).strip()
-
     def _flush_transcript_file(self):
         lines: List[str] = [self._session_start_marker, ""]
 
@@ -419,24 +476,23 @@ class MonitorService:
         timestamp = datetime.now().strftime("%H:%M:%S")
 
         with self._state_lock:
-            appended = self._append_entry_locked(timestamp, text)
+            appended, alert_text = self._append_or_merge_local_entry_locked(timestamp, text)
             if appended:
                 self._flush_transcript_file()
                 self._schedule_summary_locked()
-            keyword_text = self._recent_keyword_window_locked()
 
         if not appended:
             return
 
-        alerts = self._check_alerts(keyword_text)
+        alerts = self._check_alerts(alert_text)
         level = "danger" if alerts["danger"] else "warning"
         matched = alerts[level]
         if matched and self._loop:
             alert = {
                 "type": "keyword_alert",
-            "level": level,
+                "level": level,
                 "keywords": matched,
-                "text": self._normalize_text(text),
+                "text": alert_text,
                 "timestamp": timestamp,
             }
             asyncio.run_coroutine_threadsafe(
@@ -475,7 +531,7 @@ class MonitorService:
                 self._flush_transcript_file()
 
             if appended_any:
-                alert_text = self._recent_keyword_window_locked()
+                alert_text = cleaned
                 alerts = self._check_alerts(alert_text)
                 if alerts["danger"]:
                     level = "danger"

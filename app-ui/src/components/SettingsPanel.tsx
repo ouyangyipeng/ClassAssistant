@@ -203,7 +203,7 @@ export default function SettingsPanel({ visible, onClose, onSaved }: SettingsPan
         {loading ? (
           <div className="flex flex-1 items-center justify-center py-10 text-sm text-white/55">正在读取设置...</div>
         ) : (
-          <div className="flex-1 space-y-3 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/10 pb-16">
+          <div className="flex-1 space-y-3 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/10 pb-24">
             {ENV_SECTIONS.map((section) => (
               <section key={section.title} className="rounded-[var(--window-radius)] border border-white/10 bg-white/6 p-3">
                 <h3 className="mb-2 text-[11px] font-semibold text-white/90">{section.title}</h3>
@@ -316,9 +316,9 @@ export default function SettingsPanel({ visible, onClose, onSaved }: SettingsPan
           </div>
         )}
 
-        {error && <div className="absolute bottom-16 left-0 right-0 rounded-lg border border-red-500/30 bg-red-500/15 px-2 py-1 text-[10px] text-red-200">⚠️ {error}</div>}
+        {error && <div className="absolute bottom-20 left-0 right-0 rounded-lg border border-red-500/30 bg-red-500/15 px-2 py-1 text-[10px] text-red-200">⚠️ {error}</div>}
 
-        <div className="absolute bottom-0 left-0 right-0 flex items-center justify-end gap-2 border-t border-white/10 bg-[#1a1c1e] py-3 mt-auto">
+        <div className="absolute bottom-3 left-0 right-0 flex items-center justify-end gap-2 rounded-xl border border-white/10 bg-[#1a1c1e]/96 px-3 py-3 shadow-[0_-12px_24px_rgba(0,0,0,0.18)] mt-auto">
           <button
             onClick={onClose}
             disabled={saving}

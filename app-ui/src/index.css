@@ -60,7 +60,12 @@ body {
 	background:
 		radial-gradient(circle at center, rgba(34, 211, 238, 0.18), transparent 42%),
 		rgba(2, 7, 14, 0.18);
+	-webkit-backdrop-filter: blur(18px);
 	backdrop-filter: blur(18px);
+}
+
+.splash-scene {
+	background: transparent;
 }
 
 .startup-card {

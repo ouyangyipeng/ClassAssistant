@@ -1,8 +1,8 @@
-# 🐟 上课摸鱼搭子 (ClassAssistant)
+# 🦊 课狐 ClassFox - 你的上课摸鱼搭子 🐟
 
 <!-- markdownlint-disable MD033 -->
 <div align="center">
-  <img src="docs/img/logo透明背景.png" alt="ClassAssistant Logo" width="128" />
+  <img src="docs/img/logo透明背景.png" alt="课狐 ClassFox Logo" width="128" />
   <br />
   <a href="https://github.com/ouyangyipeng/ClassAssistant/stargazers">
     <img src="https://img.shields.io/github/stars/ouyangyipeng/ClassAssistant?style=for-the-badge&logo=github" alt="GitHub stars" />
@@ -13,14 +13,21 @@
 </div>
 <!-- markdownlint-enable MD033 -->
 
-> 大学课堂辅助桌面悬浮窗：实时转录、点名预警、一键救场、课后总结。
+> ClassFox — Hears what you miss.
+>
+> ClassFox 课狐 —— 听见你的错过，接住你的惊慌。
+>
+> 以耳廓狐为灵感的小体量课堂悬浮助手：资源占用轻，专门盯住你最容易错过的点名、提问和进度变化。
 
-### 🚀 v1.0.2 近期优化
-- **UI 界面瘦身**：缩小整体尺寸，调整按钮比例为 8:2，视觉更协调、低调。
-- **设置面板优化**：采用响应式布局，解决保存按钮被遮挡问题，支持前端外观（主题、圆角、透明度）即时微调。
-- **背景主题联动**：优化 Ocean/Forest 等主题色，各组件背景与按钮颜色实现全局同步。
-- **交互逻辑改进**：增加暂停/继续功能，优化窗口展开/收起的动画与尺寸控制。
-- **错误兼容处理**：修复部分 Windows 终端环境下启动时的资源加载报错。
+### 🚀 v1.2.0 近期优化
+- **品牌升级**：项目产品名更新为“课狐 ClassFox”，强调“小体量 + 高听感”的课堂辅助定位。
+- **单入口发布**：release 根目录只保留一个 课狐ClassFox.exe，后端由主程序静默拉起，避免首次使用误点多个入口。
+- **启动体验升级**：新增居中启动遮罩与 logo 动画，启动阶段不再裸露命令行窗口。
+- **紧凑悬浮窗**：主窗口压缩到更低调的 320 宽紧凑尺寸，监控、警报和扩展面板按场景单独控制高度。
+- **追问链路补齐**：救场面板和“老师讲到哪了”都支持继续追问，返回区位置上移，避免在小窗里被截断。
+- **关键词判定更准**：告警改为只检测当前新增落盘的那一行，避免把历史多行误拼成一次红灯命中。
+- **Local 模式修正**：本地识别增加短时片段拼接与更保守的停顿判定，减少一句话只落前几个字的问题。
+- **试用配置内置**：打包时会直接把 api-service/.env.example 构建为 release/backend/.env，方便开箱即用。
 
 ## 🎬 Demo
 
@@ -202,7 +209,7 @@ npm run tauri dev
 ## 📦 打包发布
 
 ```powershell
-./build.ps1 v1.0.1
+./build.ps1 v1.2.0
 ```
 
 打包流程会自动执行：
@@ -211,23 +218,34 @@ npm run tauri dev
 2. 用 .venv 中的 PyInstaller 打包 FastAPI 后端。
 3. 用 Tauri 构建桌面端 exe。
 4. 组装 release 目录。
-5. 生成 启动.bat。
-6. 用临时 .env 和独立端口 18765 做后端健康检查。
+5. 把 api-service/.env.example 同步到 release/backend/.env 与 .env.example。
+6. 用临时 .env 和独立端口 18765 做后端健康检查，结束后恢复正式配置。
 7. 输出 zip 压缩包。
 
-release/启动.bat 会在启动前清理旧后端，避免前端误连到别的目录下残留服务。
+release 根目录现在只保留一个 课狐ClassFox.exe；后端配置会随安装包一起落到 backend/.env，用户无需再手动复制模板。
 
 ## 📥 免开发环境使用
 
-从 Releases 下载 zip，解压后双击 启动.bat。
+从 Releases 下载 zip，解压后双击 课狐ClassFox.exe。
 
-首次运行会自动从 backend/.env.example 生成 backend/.env，并提示填写 API Key。保存后再次运行即可。
+release/backend/.env 默认已经写入试用配置；如果额度耗尽或你要切换成自己的服务，直接在应用内“设置”面板修改并保存即可。
 
 ## ⭐ Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=ouyangyipeng/ClassAssistant&type=Date)](https://star-history.com/#ouyangyipeng/ClassAssistant&Date)
 
 ## 📝 更新说明
+
+### v1.2.0
+
+- 品牌名更新为 课狐 ClassFox，默认窗口标题与发布包名称同步调整。
+- 发布目录改为单 exe 入口，内置启动后端，减少首次使用误操作。
+- 新增课狐启动动画遮罩，启动阶段提供更明确的状态反馈。
+- 救场与进度面板的返回区整体上移，适配当前更小的悬浮窗尺寸。
+- 告警关键词判定改为只看当前新增行，修复跨行历史误报。
+- Local ASR 调整停顿阈值并加入短时片段拼接，缓解本地识别只落前几个字的问题。
+- 设置面板底部操作区再次上移，避免保存/取消按钮被底部边框遮挡。
+- release/backend/.env 现在直接由 .env.example 构建，试用 key 可随包即用。
 
 ### v1.0.1
 

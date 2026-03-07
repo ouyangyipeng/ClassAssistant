@@ -198,6 +198,70 @@ class LLMService:
         except Exception as exc:
             return {"answer": f"LLM 调用失败: {exc}，请检查 API 配置"}
 
+    async def answer_rescue_question(
+        self,
+        context: str,
+        extracted_question: str,
+        suggested_answer: str,
+        transcript: str,
+        material: str,
+        followup: str,
+        history: list[dict] | None = None,
+    ) -> dict:
+        """围绕救场结果继续追问。"""
+        safe_history = history or []
+        history_text = "\n".join(
+            f"{item.get('role', 'user')}: {item.get('content', '')}"
+            for item in safe_history[-8:]
+            if item.get('content')
+        ) or "暂无历史追问"
+
+        system_prompt = """你是一个课堂救场辅助助手。你需要基于当前课堂上下文、识别到的老师问题、已有建议答案、最近课堂转录、课程资料以及追问历史，继续回答学生的后续问题。
+
+要求：
+1. 优先依据当前课堂上下文和已给出的救场答案作答，不要无依据扩展。
+2. 回答要适合学生临场查看，简洁直接。
+3. 如果上下文不足，要明确指出“当前课堂上下文不足”，再给出谨慎推断。
+4. 如果学生是在追问如何表达，可以给出更口语化、更短的回答版本。"""
+
+        user_prompt = f"""【课堂上下文】
+{context}
+
+【识别到的老师问题】
+{extracted_question}
+
+【当前建议答案】
+{suggested_answer}
+
+【最近课堂转录】
+{transcript}
+
+【课程资料】
+{material if material else '暂无课程资料'}
+
+【已有追问历史】
+{history_text}
+
+【学生的新问题】
+{followup}
+
+请直接回答学生。"""
+
+        try:
+            response = await self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.4,
+                max_tokens=800,
+            )
+            content = (response.choices[0].message.content or "").strip()
+            return {"answer": content or "当前没有可用回答。"}
+        except Exception as exc:
+            return {"answer": f"LLM 调用失败: {exc}，请检查 API 配置"}
+
     async def generate_class_summary(self, transcript: str, material: str) -> str:
         """
         生成课后总结 Markdown 笔记

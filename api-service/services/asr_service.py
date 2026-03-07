@@ -98,9 +98,9 @@ class LocalASR(BaseASR):
         recognizer.dynamic_energy_threshold = True
         recognizer.dynamic_energy_adjustment_damping = 0.12
         recognizer.dynamic_energy_adjustment_ratio = 1.4
-        recognizer.pause_threshold = 0.45
-        recognizer.phrase_threshold = 0.2
-        recognizer.non_speaking_duration = 0.25
+        recognizer.pause_threshold = 0.9
+        recognizer.phrase_threshold = 0.35
+        recognizer.non_speaking_duration = 0.45
 
         mic = sr.Microphone(sample_rate=SAMPLE_RATE)
 
@@ -114,7 +114,7 @@ class LocalASR(BaseASR):
                         audio = recognizer.listen(
                             source,
                             timeout=5,            # 最长等待 5 秒
-                            phrase_time_limit=10,  # 单段最长 10 秒
+                            phrase_time_limit=15,  # 单段最长 15 秒
                         )
                     except sr.WaitTimeoutError:
                         continue

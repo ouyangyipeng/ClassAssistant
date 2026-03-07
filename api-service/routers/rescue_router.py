@@ -27,6 +27,14 @@ class CatchupChatRequest(BaseModel):
     history: list[CatchupHistoryItem] = []
 
 
+class RescueChatRequest(BaseModel):
+    context: str
+    question: str
+    answer: str
+    followup: str
+    history: list[CatchupHistoryItem] = []
+
+
 @router.post("/emergency_rescue")
 async def emergency_rescue():
     """
@@ -116,3 +124,26 @@ async def catchup_chat(request: CatchupChatRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"课堂追问失败: {str(e)}")
+
+
+@router.post("/emergency_rescue_chat")
+async def emergency_rescue_chat(request: RescueChatRequest):
+    """围绕当前救场分析结果继续追问。"""
+    try:
+        recent_transcript = transcript_service.get_recent_transcript(minutes=10)
+        class_material = transcript_service.get_class_material()
+        result = await llm_service.answer_rescue_question(
+            context=request.context,
+            extracted_question=request.question,
+            suggested_answer=request.answer,
+            transcript=recent_transcript,
+            material=class_material,
+            followup=request.followup,
+            history=[item.model_dump() for item in request.history],
+        )
+        return {
+            "status": "success",
+            **result,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"救场追问失败: {str(e)}")

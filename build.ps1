@@ -123,6 +123,7 @@ Write-Host "      复制后端文件 ..."
 $backendDist = Join-Path $API_DIR "dist\class-assistant-backend"
 Copy-Item "$backendDist\*" (Join-Path $RELEASE_DIR "backend") -Recurse -Force
 Copy-Item (Join-Path $API_DIR ".env.example") (Join-Path $RELEASE_DIR "backend\.env.example") -Force
+Copy-Item (Join-Path $API_DIR ".env.example") (Join-Path $RELEASE_DIR "backend\.env") -Force
 
 # 复制前端 exe（尝试 productName，回退到 Cargo name）
 Write-Host "      复制前端文件 ..."
@@ -160,7 +161,9 @@ Write-Host "[5/6] 验证打包后端可正常启动 ..." -ForegroundColor Yellow
 # 使用临时 .env 和专用端口，避免与开发环境冲突
 $testPort = 18765
 $testEnv = Join-Path $RELEASE_DIR "backend\.env"
+$releaseEnvBackup = $null
 $testEnvContent = "API_PORT=$testPort`nASR_MODE=mock`n"
+[string]$releaseEnvBackup = [IO.File]::ReadAllText($testEnv)
 [IO.File]::WriteAllText($testEnv, $testEnvContent)
 
 $backendExe = Join-Path $RELEASE_DIR "backend\class-assistant-backend.exe"
@@ -196,7 +199,9 @@ try {
     Write-Host "      [失败] 启动后端失败: $($_.Exception.Message)" -ForegroundColor Red
 } finally {
     if ($proc -and !$proc.HasExited) { Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue }
-    if (Test-Path $testEnv) { Remove-Item $testEnv -Force }
+    if ($null -ne $releaseEnvBackup) {
+        [IO.File]::WriteAllText($testEnv, $releaseEnvBackup)
+    }
 }
 
 if (-not $testOk) {
