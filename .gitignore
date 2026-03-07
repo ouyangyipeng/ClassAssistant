@@ -1,40 +1,20 @@
-# 上课摸鱼搭子 (ClassAssistant)
+# docs branch
 
-# ---- Python ----
+# Python virtual environments
+.venv/
+.venv-docs/
 __pycache__/
 *.pyc
 *.pyo
-.venv/
-.conda/
 
-# ---- Node / Frontend ----
-node_modules/
-dist/
+# Temporary build output
+pages-dist/
 
-# ---- Rust / Tauri ----
-target/
-
-# ---- 环境变量（含 API Key，禁止提交） ----
-.env
-api-service/.env
-
-# ---- 运行时数据 ----
-data/*.txt
-!data/keywords.txt
-data/cite/
-data/summaries/
-
-# ---- IDE ----
+# Local editor files
 .vscode/
 .idea/
 
-# ---- OS ----
+# OS noise
 .DS_Store
 Thumbs.db
 *.log
-
-# ---- 构建产物 ----
-api-service/build/
-api-service/dist/
-release/
-*.zip

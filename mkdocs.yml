@@ -1,0 +1,92 @@
+site_name: 课狐 ClassFox 文档中心
+site_description: 课狐 ClassFox 项目文档，涵盖项目介绍、环境准备、架构设计、开发流程与普通用户使用说明。
+site_url: https://ouyangyipeng.github.io/ClassAssistant/
+repo_url: https://github.com/ouyangyipeng/ClassAssistant
+repo_name: ouyangyipeng/ClassAssistant
+
+theme:
+  name: material
+  language: zh
+  logo: img/logo透明背景.png
+  favicon: img/logo.png
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - scheme: default
+      primary: teal
+      accent: amber
+  font:
+    text: Noto Sans SC
+    code: JetBrains Mono
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+    - content.tabs.link
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/ouyangyipeng/ClassAssistant
+  generator: false
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - 首页: index.md
+  - 项目概览:
+      - 项目介绍: project/introduction.md
+      - 系统架构: project/architecture.md
+      - 代码模块说明: project/modules.md
+      - 数据与配置: project/data-and-config.md
+  - 快速开始:
+      - 环境准备: getting-started/environment.md
+      - 开发运行: getting-started/development.md
+      - 打包发布: getting-started/packaging.md
+  - 用户指南:
+      - 首次使用: user-guide/quickstart.md
+      - 功能工作流: user-guide/features.md
+      - 常见问题: user-guide/faq.md
+  - 开发者指南:
+      - 接口与联调: developer/api-reference.md
+      - 排错手册: developer/troubleshooting.md
+  - 附录:
+      - 历史开发说明: 开发指南.md
+      - Fun-ASR 资料: Fun-asr-python-sdk.md
+      - Seed-ASR 协议: seed-asr-api.md
+
+copyright: Copyright © 2026 ouyangyipeng

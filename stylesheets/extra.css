@@ -1,0 +1,22 @@
+:root {
+  --md-primary-fg-color: #0f766e;
+  --md-primary-fg-color--light: #14b8a6;
+  --md-accent-fg-color: #d97706;
+}
+
+.md-header {
+  backdrop-filter: saturate(160%) blur(14px);
+}
+
+.md-typeset h1,
+.md-typeset h2 {
+  letter-spacing: -0.02em;
+}
+
+.md-typeset .md-button--primary {
+  border-radius: 999px;
+}
+
+.md-typeset table:not([class]) {
+  font-size: 0.92rem;
+}
