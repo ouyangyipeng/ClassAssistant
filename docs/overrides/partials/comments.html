@@ -1,0 +1,30 @@
+{% set comments = config.extra.comments %}
+{% if comments and comments.enabled and not page.meta.no_comments %}
+  <section class="giscus-shell" aria-label="评论区">
+    <h2 class="giscus-shell__title">评论区</h2>
+    {% if comments.repo_id and comments.category_id %}
+      <script
+        src="https://giscus.app/client.js"
+        data-repo="{{ comments.repo }}"
+        data-repo-id="{{ comments.repo_id }}"
+        data-category="{{ comments.category }}"
+        data-category-id="{{ comments.category_id }}"
+        data-mapping="{{ comments.mapping | default('pathname') }}"
+        data-strict="{{ comments.strict | default('1') }}"
+        data-reactions-enabled="{{ comments.reactions_enabled | default('1') }}"
+        data-emit-metadata="0"
+        data-input-position="{{ comments.input_position | default('bottom') }}"
+        data-theme="preferred_color_scheme"
+        data-lang="{{ comments.lang | default('zh-CN') }}"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async
+      ></script>
+    {% else %}
+      <p class="giscus-shell__hint">
+        Giscus 模板已接入，但当前仓库的 repo_id/category_id 还未写入 mkdocs.yml。
+        将这两个值补齐后，页面会自动切换为基于 GitHub Discussions 的评论区。
+      </p>
+    {% endif %}
+  </section>
+{% endif %}

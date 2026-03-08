@@ -6,33 +6,58 @@ repo_name: ouyangyipeng/ClassAssistant
 
 theme:
   name: material
+  custom_dir: docs/overrides
   language: zh
   logo: img/logo透明背景.png
   favicon: img/logo.png
   icon:
     repo: fontawesome/brands/github
+  font: false
   palette:
-    - scheme: default
-      primary: teal
-      accent: amber
-  font:
-    text: Noto Sans SC
-    code: JetBrains Mono
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: red
+      accent: deep orange
+      toggle:
+        icon: material/weather-night
+        name: 切换到深色模式
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: red
+      accent: deep orange
+      toggle:
+        icon: material/weather-sunny
+        name: 切换到浅色模式
   features:
     - navigation.instant
+    - navigation.instant.progress
     - navigation.tracking
-    - navigation.sections
-    - navigation.expand
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.prune
     - navigation.top
     - navigation.footer
+    - navigation.indexes
     - toc.follow
     - search.highlight
     - search.suggest
     - content.code.copy
+    - content.code.select
     - content.tabs.link
 
 plugins:
   - search
+  - minify:
+      minify_html: true
+      minify_js: true
+      minify_css: true
+      htmlmin_opts:
+        remove_comments: true
+      cache_safe: true
+  - git-revision-date-localized:
+      enable_creation_date: true
+      enable_git_follow: false
+      type: iso_datetime
 
 markdown_extensions:
   - admonition
@@ -46,11 +71,16 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.highlight:
       anchor_linenums: true
+      linenums: true
+      use_pygments: true
+      pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.arithmatex:
+      generic: true
   - pymdownx.critic
   - pymdownx.caret
   - pymdownx.keys
@@ -62,31 +92,48 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/ouyangyipeng/ClassAssistant
   generator: false
+  comments:
+    enabled: true
+    repo: ouyangyipeng/ClassAssistant
+    repo_id: R_kgDORfBNUQ
+    category: General
+    category_id: DIC_kwDORfBNUc4C30oY
+    mapping: pathname
+    strict: '1'
+    reactions_enabled: '1'
+    input_position: bottom
+    lang: zh-CN
 
 extra_css:
+  - stylesheets/fonts.css
   - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/giscus.js
 
 nav:
   - 首页: index.md
-  - 项目概览:
+  - 项目全景:
+      - 概览入口: project/index.md
       - 项目介绍: project/introduction.md
       - 系统架构: project/architecture.md
       - 代码模块说明: project/modules.md
       - 数据与配置: project/data-and-config.md
-  - 快速开始:
+  - 使用指南:
+      - 使用入口: user-guide/index.md
       - 环境准备: getting-started/environment.md
-      - 开发运行: getting-started/development.md
-      - 打包发布: getting-started/packaging.md
-  - 用户指南:
       - 首次使用: user-guide/quickstart.md
       - 功能工作流: user-guide/features.md
       - 常见问题: user-guide/faq.md
-  - 开发者指南:
+  - 开发维护:
+      - 开发入口: developer/index.md
+      - 开发运行: getting-started/development.md
+      - 打包发布: getting-started/packaging.md
       - 接口与联调: developer/api-reference.md
       - 排错手册: developer/troubleshooting.md
-  - 附录:
-      - 历史开发说明: 开发指南.md
-      - Fun-ASR 资料: Fun-asr-python-sdk.md
-      - Seed-ASR 协议: seed-asr-api.md
+      - 附录资料:
+          - 历史开发说明: 开发指南.md
+          - Fun-ASR 资料: Fun-asr-python-sdk.md
+          - Seed-ASR 协议: seed-asr-api.md
 
 copyright: Copyright © 2026 ouyangyipeng

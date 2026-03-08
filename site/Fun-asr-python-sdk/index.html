@@ -1,0 +1,549 @@
+<!doctype html><html lang=zh class=no-js> <head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="课狐 ClassFox 项目文档，涵盖项目介绍、环境准备、架构设计、开发流程与普通用户使用说明。"><link href=https://ouyangyipeng.github.io/ClassAssistant/Fun-asr-python-sdk/ rel=canonical><link href=../%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/ rel=prev><link href=../seed-asr-api/ rel=next><link rel=icon href=../img/logo.png><meta name=generator content="mkdocs-1.6.1, mkdocs-material-9.7.4"><title>Fun-ASR 资料 - 课狐 ClassFox 文档中心</title><link rel=stylesheet href=../assets/stylesheets/main.484c7ddc.min.css><link rel=stylesheet href=../assets/stylesheets/palette.ab4e12ef.min.css><link rel=stylesheet href=../stylesheets/fonts.css><link rel=stylesheet href=../stylesheets/extra.css><script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script></head> <body dir=ltr data-md-color-scheme=default data-md-color-primary=red data-md-color-accent=deep-orange> <input class=md-toggle data-md-toggle=drawer type=checkbox id=__drawer autocomplete=off> <input class=md-toggle data-md-toggle=search type=checkbox id=__search autocomplete=off> <label class=md-overlay for=__drawer></label> <div data-md-component=skip> <a href=#_1 class=md-skip> 跳转至 </a> </div> <div data-md-component=announce> </div> <header class="md-header md-header--shadow md-header--lifted" data-md-component=header> <nav class="md-header__inner md-grid" aria-label=页眉> <a href=.. title="课狐 ClassFox 文档中心" class="md-header__button md-logo" aria-label="课狐 ClassFox 文档中心" data-md-component=logo> <img src=../img/logo透明背景.png alt=logo> </a> <label class="md-header__button md-icon" for=__drawer> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg> </label> <div class=md-header__title data-md-component=header-title> <div class=md-header__ellipsis> <div class=md-header__topic> <span class=md-ellipsis> 课狐 ClassFox 文档中心 </span> </div> <div class=md-header__topic data-md-component=header-topic> <span class=md-ellipsis> Fun-ASR 资料 </span> </div> </div> </div> <form class=md-header__option data-md-component=palette> <input class=md-option data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme=default data-md-color-primary=red data-md-color-accent=deep-orange aria-label=切换到深色模式 type=radio name=__palette id=__palette_0> <label class="md-header__button md-icon" title=切换到深色模式 for=__palette_1 hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg> </label> <input class=md-option data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme=slate data-md-color-primary=red data-md-color-accent=deep-orange aria-label=切换到浅色模式 type=radio name=__palette id=__palette_1> <label class="md-header__button md-icon" title=切换到浅色模式 for=__palette_0 hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg> </label> </form> <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script> <label class="md-header__button md-icon" for=__search> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg> </label> <div class=md-search data-md-component=search role=dialog> <label class=md-search__overlay for=__search></label> <div class=md-search__inner role=search> <form class=md-search__form name=search> <input type=text class=md-search__input name=query aria-label=搜索 placeholder=搜索 autocapitalize=off autocorrect=off autocomplete=off spellcheck=false data-md-component=search-query required> <label class="md-search__icon md-icon" for=__search> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg> </label> <nav class=md-search__options aria-label=查找> <button type=reset class="md-search__icon md-icon" title=清空当前内容 aria-label=清空当前内容 tabindex=-1> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg> </button> </nav> <div class=md-search__suggest data-md-component=search-suggest></div> </form> <div class=md-search__output> <div class=md-search__scrollwrap tabindex=0 data-md-scrollfix> <div class=md-search-result data-md-component=search-result> <div class=md-search-result__meta> 正在初始化搜索引擎 </div> <ol class=md-search-result__list role=presentation></ol> </div> </div> </div> </div> </div> <div class=md-header__source> <a href=https://github.com/ouyangyipeng/ClassAssistant title=前往仓库 class=md-source data-md-component=source> <div class="md-source__icon md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 512 512"><!-- Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg> </div> <div class=md-source__repository> ouyangyipeng/ClassAssistant </div> </a> </div> </nav> <nav class=md-tabs aria-label=标签 data-md-component=tabs> <div class=md-grid> <ul class=md-tabs__list> <li class=md-tabs__item> <a href=.. class=md-tabs__link> 首页 </a> </li> <li class=md-tabs__item> <a href=../project/ class=md-tabs__link> 项目全景 </a> </li> <li class=md-tabs__item> <a href=../user-guide/ class=md-tabs__link> 使用指南 </a> </li> <li class="md-tabs__item md-tabs__item--active"> <a href=../developer/ class=md-tabs__link> 开发维护 </a> </li> </ul> </div> </nav> </header> <div class=md-container data-md-component=container> <main class=md-main data-md-component=main> <div class="md-main__inner md-grid"> <div class="md-sidebar md-sidebar--primary" data-md-component=sidebar data-md-type=navigation> <div class=md-sidebar__scrollwrap> <div class=md-sidebar__inner> <nav class="md-nav md-nav--primary md-nav--lifted" aria-label=导航栏 data-md-level=0> <label class=md-nav__title for=__drawer> <a href=.. title="课狐 ClassFox 文档中心" class="md-nav__button md-logo" aria-label="课狐 ClassFox 文档中心" data-md-component=logo> <img src=../img/logo透明背景.png alt=logo> </a> 课狐 ClassFox 文档中心 </label> <div class=md-nav__source> <a href=https://github.com/ouyangyipeng/ClassAssistant title=前往仓库 class=md-source data-md-component=source> <div class="md-source__icon md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 512 512"><!-- Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg> </div> <div class=md-source__repository> ouyangyipeng/ClassAssistant </div> </a> </div> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=.. class=md-nav__link> <span class=md-ellipsis> 首页 </span> </a> </li> <li class="md-nav__item md-nav__item--pruned md-nav__item--nested"> <a href=../project/ class=md-nav__link> <span class=md-ellipsis> 项目全景 </span> <span class="md-nav__icon md-icon"></span> </a> </li> <li class="md-nav__item md-nav__item--pruned md-nav__item--nested"> <a href=../user-guide/ class=md-nav__link> <span class=md-ellipsis> 使用指南 </span> <span class="md-nav__icon md-icon"></span> </a> </li> <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_4 checked> <div class="md-nav__link md-nav__container"> <a href=../developer/ class="md-nav__link "> <span class=md-ellipsis> 开发维护 </span> </a> <label class="md-nav__link " for=__nav_4 id=__nav_4_label tabindex> <span class="md-nav__icon md-icon"></span> </label> </div> <nav class=md-nav data-md-level=1 aria-labelledby=__nav_4_label aria-expanded=true> <label class=md-nav__title for=__nav_4> <span class="md-nav__icon md-icon"></span> 开发维护 </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../getting-started/development/ class=md-nav__link> <span class=md-ellipsis> 开发运行 </span> </a> </li> <li class=md-nav__item> <a href=../getting-started/packaging/ class=md-nav__link> <span class=md-ellipsis> 打包发布 </span> </a> </li> <li class=md-nav__item> <a href=../developer/api-reference/ class=md-nav__link> <span class=md-ellipsis> 接口与联调 </span> </a> </li> <li class=md-nav__item> <a href=../developer/troubleshooting/ class=md-nav__link> <span class=md-ellipsis> 排错手册 </span> </a> </li> <li class="md-nav__item md-nav__item--active md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_4_6 checked> <label class=md-nav__link for=__nav_4_6 id=__nav_4_6_label tabindex=0> <span class=md-ellipsis> 附录资料 </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=2 aria-labelledby=__nav_4_6_label aria-expanded=true> <label class=md-nav__title for=__nav_4_6> <span class="md-nav__icon md-icon"></span> 附录资料 </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/ class=md-nav__link> <span class=md-ellipsis> 历史开发说明 </span> </a> </li> <li class="md-nav__item md-nav__item--active"> <input class="md-nav__toggle md-toggle" type=checkbox id=__toc> <label class="md-nav__link md-nav__link--active" for=__toc> <span class=md-ellipsis> Fun-ASR 资料 </span> <span class="md-nav__icon md-icon"></span> </label> <a href=./ class="md-nav__link md-nav__link--active"> <span class=md-ellipsis> Fun-ASR 资料 </span> </a> <nav class="md-nav md-nav--secondary" aria-label=目录> <label class=md-nav__title for=__toc> <span class="md-nav__icon md-icon"></span> 目录 </label> <ul class=md-nav__list data-md-component=toc data-md-scrollfix> <li class=md-nav__item> <a href=#_1 class=md-nav__link> <span class=md-ellipsis> 前提条件 </span> </a> </li> <li class=md-nav__item> <a href=#_2 class=md-nav__link> <span class=md-ellipsis> 模型列表 </span> </a> <nav class=md-nav aria-label=模型列表> <ul class=md-nav__list> <li class=md-nav__item> <a href=#_3 class=md-nav__link> <span class=md-ellipsis> 中国内地 </span> </a> </li> <li class=md-nav__item> <a href=#_4 class=md-nav__link> <span class=md-ellipsis> 国际 </span> </a> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=#_5 class=md-nav__link> <span class=md-ellipsis> 快速开始 </span> </a> <nav class=md-nav aria-label=快速开始> <ul class=md-nav__list> <li class=md-nav__item> <a href=#_6 class=md-nav__link> <span class=md-ellipsis> 非流式调用 </span> </a> </li> <li class=md-nav__item> <a href=#_7 class=md-nav__link> <span class=md-ellipsis> 双向流式调用 </span> </a> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=#_8 class=md-nav__link> <span class=md-ellipsis> 识别传入麦克风的语音 </span> </a> </li> <li class=md-nav__item> <a href=#_9 class=md-nav__link> <span class=md-ellipsis> 识别本地语音文件 </span> </a> </li> <li class=md-nav__item> <a href=#_10 class=md-nav__link> <span class=md-ellipsis> 请求参数 </span> </a> </li> <li class=md-nav__item> <a href=#_11 class=md-nav__link> <span class=md-ellipsis> 关键接口 </span> </a> <nav class=md-nav aria-label=关键接口> <ul class=md-nav__list> <li class=md-nav__item> <a href=#recognition class=md-nav__link> <span class=md-ellipsis> Recognition类 </span> </a> </li> <li class=md-nav__item> <a href=#recognitioncallback class=md-nav__link> <span class=md-ellipsis> 回调接口（RecognitionCallback） </span> </a> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=#_12 class=md-nav__link> <span class=md-ellipsis> 响应结果 </span> </a> <nav class=md-nav aria-label=响应结果> <ul class=md-nav__list> <li class=md-nav__item> <a href=#recognitionresult class=md-nav__link> <span class=md-ellipsis> 识别结果（**RecognitionResult**） </span> </a> </li> <li class=md-nav__item> <a href=#sentence class=md-nav__link> <span class=md-ellipsis> 单句信息（Sentence） </span> </a> </li> <li class=md-nav__item> <a href=#word class=md-nav__link> <span class=md-ellipsis> 字时间戳信息（**Word**） </span> </a> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=#_13 class=md-nav__link> <span class=md-ellipsis> 错误码 </span> </a> </li> <li class=md-nav__item> <a href=#_14 class=md-nav__link> <span class=md-ellipsis> 常见问题 </span> </a> <nav class=md-nav aria-label=常见问题> <ul class=md-nav__list> <li class=md-nav__item> <a href=#_15 class=md-nav__link> <span class=md-ellipsis> 功能特性 </span> </a> <nav class=md-nav aria-label=功能特性> <ul class=md-nav__list> <li class=md-nav__item> <a href=#q class=md-nav__link> <span class=md-ellipsis> Q：在长时间静默的情况下，如何保持与服务端长连接？ </span> </a> </li> <li class=md-nav__item> <a href=#q_1 class=md-nav__link> <span class=md-ellipsis> Q：如何将音频格式转换为满足要求的格式？ </span> </a> </li> <li class=md-nav__item> <a href=#q_2 class=md-nav__link> <span class=md-ellipsis> Q：如何识别本地文件（录音文件）？ </span> </a> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=#_16 class=md-nav__link> <span class=md-ellipsis> 故障排查 </span> </a> <nav class=md-nav aria-label=故障排查> <ul class=md-nav__list> <li class=md-nav__item> <a href=#q_3 class=md-nav__link> <span class=md-ellipsis> Q：无法识别语音（无识别结果）是什么原因？ </span> </a> </li> </ul> </nav> </li> </ul> </nav> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=../seed-asr-api/ class=md-nav__link> <span class=md-ellipsis> Seed-ASR 协议 </span> </a> </li> </ul> </nav> </li> </ul> </nav> </li> </ul> </nav> </div> </div> </div> <div class="md-sidebar md-sidebar--secondary" data-md-component=sidebar data-md-type=toc> <div class=md-sidebar__scrollwrap> <div class=md-sidebar__inner> <nav class="md-nav md-nav--secondary" aria-label=目录> <label class=md-nav__title for=__toc> <span class="md-nav__icon md-icon"></span> 目录 </label> <ul class=md-nav__list data-md-component=toc data-md-scrollfix> <li class=md-nav__item> <a href=#_1 class=md-nav__link> <span class=md-ellipsis> 前提条件 </span> </a> </li> <li class=md-nav__item> <a href=#_2 class=md-nav__link> <span class=md-ellipsis> 模型列表 </span> </a> <nav class=md-nav aria-label=模型列表> <ul class=md-nav__list> <li class=md-nav__item> <a href=#_3 class=md-nav__link> <span class=md-ellipsis> 中国内地 </span> </a> </li> <li class=md-nav__item> <a href=#_4 class=md-nav__link> <span class=md-ellipsis> 国际 </span> </a> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=#_5 class=md-nav__link> <span class=md-ellipsis> 快速开始 </span> </a> <nav class=md-nav aria-label=快速开始> <ul class=md-nav__list> <li class=md-nav__item> <a href=#_6 class=md-nav__link> <span class=md-ellipsis> 非流式调用 </span> </a> </li> <li class=md-nav__item> <a href=#_7 class=md-nav__link> <span class=md-ellipsis> 双向流式调用 </span> </a> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=#_8 class=md-nav__link> <span class=md-ellipsis> 识别传入麦克风的语音 </span> </a> </li> <li class=md-nav__item> <a href=#_9 class=md-nav__link> <span class=md-ellipsis> 识别本地语音文件 </span> </a> </li> <li class=md-nav__item> <a href=#_10 class=md-nav__link> <span class=md-ellipsis> 请求参数 </span> </a> </li> <li class=md-nav__item> <a href=#_11 class=md-nav__link> <span class=md-ellipsis> 关键接口 </span> </a> <nav class=md-nav aria-label=关键接口> <ul class=md-nav__list> <li class=md-nav__item> <a href=#recognition class=md-nav__link> <span class=md-ellipsis> Recognition类 </span> </a> </li> <li class=md-nav__item> <a href=#recognitioncallback class=md-nav__link> <span class=md-ellipsis> 回调接口（RecognitionCallback） </span> </a> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=#_12 class=md-nav__link> <span class=md-ellipsis> 响应结果 </span> </a> <nav class=md-nav aria-label=响应结果> <ul class=md-nav__list> <li class=md-nav__item> <a href=#recognitionresult class=md-nav__link> <span class=md-ellipsis> 识别结果（**RecognitionResult**） </span> </a> </li> <li class=md-nav__item> <a href=#sentence class=md-nav__link> <span class=md-ellipsis> 单句信息（Sentence） </span> </a> </li> <li class=md-nav__item> <a href=#word class=md-nav__link> <span class=md-ellipsis> 字时间戳信息（**Word**） </span> </a> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=#_13 class=md-nav__link> <span class=md-ellipsis> 错误码 </span> </a> </li> <li class=md-nav__item> <a href=#_14 class=md-nav__link> <span class=md-ellipsis> 常见问题 </span> </a> <nav class=md-nav aria-label=常见问题> <ul class=md-nav__list> <li class=md-nav__item> <a href=#_15 class=md-nav__link> <span class=md-ellipsis> 功能特性 </span> </a> <nav class=md-nav aria-label=功能特性> <ul class=md-nav__list> <li class=md-nav__item> <a href=#q class=md-nav__link> <span class=md-ellipsis> Q：在长时间静默的情况下，如何保持与服务端长连接？ </span> </a> </li> <li class=md-nav__item> <a href=#q_1 class=md-nav__link> <span class=md-ellipsis> Q：如何将音频格式转换为满足要求的格式？ </span> </a> </li> <li class=md-nav__item> <a href=#q_2 class=md-nav__link> <span class=md-ellipsis> Q：如何识别本地文件（录音文件）？ </span> </a> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=#_16 class=md-nav__link> <span class=md-ellipsis> 故障排查 </span> </a> <nav class=md-nav aria-label=故障排查> <ul class=md-nav__list> <li class=md-nav__item> <a href=#q_3 class=md-nav__link> <span class=md-ellipsis> Q：无法识别语音（无识别结果）是什么原因？ </span> </a> </li> </ul> </nav> </li> </ul> </nav> </li> </ul> </nav> </div> </div> </div> <div class=md-content data-md-component=content> <article class="md-content__inner md-typeset"> <h1>Fun-ASR 资料</h1> <p>本文介绍Fun-ASR实时语音识别Python SDK的参数和接口细节。</p> <p><strong>用户指南：</strong>关于模型介绍和选型建议请参见<a href=https://help.aliyun.com/zh/model-studio/real-time-speech-recognition>实时语音识别-Fun-ASR/Gummy/Paraformer</a>。</p> <h2 id=_1><strong>前提条件</strong><a class=headerlink href=#_1 title="Permanent link">&para;</a></h2> <ul> <li> <p>已开通服务并<a href=https://help.aliyun.com/zh/model-studio/get-api-key>获取API Key</a>。请<a href=https://help.aliyun.com/zh/model-studio/configure-api-key-through-environment-variables>配置API Key到环境变量</a>，而非硬编码在代码中，防范因代码泄露导致的安全风险。</p> </li> <li> <p><a href=https://help.aliyun.com/zh/model-studio/install-sdk>安装最新版DashScope SDK</a>。</p> </li> </ul> <h2 id=_2><strong>模型列表</strong><a class=headerlink href=#_2 title="Permanent link">&para;</a></h2> <h3 id=_3>中国内地<a class=headerlink href=#_3 title="Permanent link">&para;</a></h3> <p>在<a href=https://help.aliyun.com/zh/model-studio/regions/#080da663a75xh>中国内地部署模式</a>下，接入点与数据存储均位于<strong>北京地域</strong>，模型推理计算资源仅限于中国内地。</p> <table> <thead> <tr> <th><strong>模型名称</strong></th> <th><strong>版本</strong></th> <th><strong>单价</strong></th> <th><strong>免费额度</strong><a href=https://help.aliyun.com/zh/model-studio/new-free-quota#591f3dfedfyzj><strong>（注）</strong></a></th> </tr> </thead> <tbody> <tr> <td>fun-asr-realtime &gt; 当前等同fun-asr-realtime-2025-11-07</td> <td>稳定版</td> <td>0.00033元/秒</td> <td>36,000秒（10小时） 有效期：阿里云百炼开通后90天</td> </tr> <tr> <td>fun-asr-realtime-2025-11-07</td> <td>快照版</td> <td></td> <td></td> </tr> <tr> <td>fun-asr-realtime-2025-09-15</td> <td></td> <td></td> <td></td> </tr> <tr> <td>fun-asr-flash-8k-realtime &gt; 当前等同fun-asr-flash-8k-realtime-2026-01-28</td> <td>稳定版</td> <td>0.00022元/秒</td> <td></td> </tr> <tr> <td>fun-asr-flash-8k-realtime-2026-01-28</td> <td>快照版</td> <td></td> <td></td> </tr> </tbody> </table> <ul> <li> <p><strong>支持的语种</strong>：</p> <ul> <li> <p>fun-asr-realtime、fun-asr-realtime-2025-11-07：中文（普通话、粤语、吴语、闽南语、客家话、赣语、湘语、晋语；并支持中原、西南、冀鲁、江淮、兰银、胶辽、东北、北京、港台等，包括河南、陕西、湖北、四川、重庆、云南、贵州、广东、广西、河北、天津、山东、安徽、南京、江苏、杭州、甘肃、宁夏等地区官话口音）、英文、日语</p> </li> <li> <p>fun-asr-realtime-2025-09-15：中文（普通话、粤语）、英文、日语、韩语、越南语、印尼语、泰语</p> </li> </ul> </li> <li> <p><strong>支持的采样率</strong>：</p> <ul> <li> <p>fun-asr-flash-8k-realtime、fun-asr-flash-8k-realtime-2026-01-28：8kHz</p> </li> <li> <p>其他模型：16kHz</p> </li> </ul> </li> <li> <p><strong>支持的音频格式</strong>：pcm、wav、mp3、opus、speex、aac、amr</p> </li> </ul> <h3 id=_4><strong>国际</strong><a class=headerlink href=#_4 title="Permanent link">&para;</a></h3> <p>在<a href=https://help.aliyun.com/zh/model-studio/regions/#080da663a75xh>国际部署模式</a>下，接入点与数据存储均位于<strong>新加坡地域</strong>，模型推理计算资源在全球范围内动态调度（不含中国内地）。</p> <table> <thead> <tr> <th><strong>模型名称</strong></th> <th><strong>版本</strong></th> <th><strong>单价</strong></th> <th><strong>免费额度</strong><a href=https://help.aliyun.com/zh/model-studio/new-free-quota#591f3dfedfyzj><strong>（注）</strong></a></th> </tr> </thead> <tbody> <tr> <td>fun-asr-realtime &gt; 当前等同fun-asr-realtime-2025-11-07</td> <td>稳定版</td> <td>0.00066元/秒</td> <td>无免费额度</td> </tr> <tr> <td>fun-asr-realtime-2025-11-07</td> <td>快照版</td> <td></td> <td></td> </tr> </tbody> </table> <ul> <li> <p><strong>支持的语种</strong>：中文（普通话、粤语、吴语、闽南语、客家话、赣语、湘语、晋语；并支持中原、西南、冀鲁、江淮、兰银、胶辽、东北、北京、港台等，包括河南、陕西、湖北、四川、重庆、云南、贵州、广东、广西、河北、天津、山东、安徽、南京、江苏、杭州、甘肃、宁夏等地区官话口音）、英文、日语</p> </li> <li> <p><strong>支持的采样率</strong>：16kHz</p> </li> <li> <p><strong>支持的音频格式</strong>：pcm、wav、mp3、opus、speex、aac、amr</p> </li> </ul> <h2 id=_5><strong>快速开始</strong><a class=headerlink href=#_5 title="Permanent link">&para;</a></h2> <p><a href=#44f87473bfp2m>Recognition类</a>提供了非流式调用和双向流式调用等接口。请根据实际需求选择合适的调用方式：</p> <ul> <li> <p>非流式调用：针对本地文件进行识别，并一次性返回完整的处理结果。适合处理录制好的音频。</p> </li> <li> <p>双向流式调用：可直接对音频流进行识别，并实时输出结果。音频流可以来自外部设备（如麦克风）或从本地文件读取。适合需要即时反馈的场景。</p> </li> </ul> <h3 id=_6><strong>非流式调用</strong><a class=headerlink href=#_6 title="Permanent link">&para;</a></h3> <p>提交单个语音实时转写任务，通过传入本地文件的方式同步阻塞地拿到转写结果。</p> <p>实例化<a href=#44f87473bfp2m>Recognition类</a>绑定<a href=https://help.aliyun.com/zh/model-studio/paraformer-real-time-speech-recognition-python-sdk#555007db2033f>请求参数</a>，调用<code>call</code>进行识别/翻译并最终获取<a href=https://help.aliyun.com/zh/model-studio/paraformer-real-time-speech-recognition-python-sdk#bc3e1a43d6hhy>识别结果（RecognitionResult）</a>。</p> <p>点击查看完整示例</p> <p>示例中用到的音频为：<a href=https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250210/iwaouc/asr_example.wav>asr_example.wav</a>。</p> <div class="language-text highlight"><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal><a href=#__codelineno-0-1> 1</a></span>
+<span class=normal><a href=#__codelineno-0-2> 2</a></span>
+<span class=normal><a href=#__codelineno-0-3> 3</a></span>
+<span class=normal><a href=#__codelineno-0-4> 4</a></span>
+<span class=normal><a href=#__codelineno-0-5> 5</a></span>
+<span class=normal><a href=#__codelineno-0-6> 6</a></span>
+<span class=normal><a href=#__codelineno-0-7> 7</a></span>
+<span class=normal><a href=#__codelineno-0-8> 8</a></span>
+<span class=normal><a href=#__codelineno-0-9> 9</a></span>
+<span class=normal><a href=#__codelineno-0-10>10</a></span>
+<span class=normal><a href=#__codelineno-0-11>11</a></span>
+<span class=normal><a href=#__codelineno-0-12>12</a></span>
+<span class=normal><a href=#__codelineno-0-13>13</a></span>
+<span class=normal><a href=#__codelineno-0-14>14</a></span>
+<span class=normal><a href=#__codelineno-0-15>15</a></span>
+<span class=normal><a href=#__codelineno-0-16>16</a></span>
+<span class=normal><a href=#__codelineno-0-17>17</a></span>
+<span class=normal><a href=#__codelineno-0-18>18</a></span>
+<span class=normal><a href=#__codelineno-0-19>19</a></span>
+<span class=normal><a href=#__codelineno-0-20>20</a></span>
+<span class=normal><a href=#__codelineno-0-21>21</a></span>
+<span class=normal><a href=#__codelineno-0-22>22</a></span>
+<span class=normal><a href=#__codelineno-0-23>23</a></span>
+<span class=normal><a href=#__codelineno-0-24>24</a></span>
+<span class=normal><a href=#__codelineno-0-25>25</a></span>
+<span class=normal><a href=#__codelineno-0-26>26</a></span>
+<span class=normal><a href=#__codelineno-0-27>27</a></span>
+<span class=normal><a href=#__codelineno-0-28>28</a></span>
+<span class=normal><a href=#__codelineno-0-29>29</a></span>
+<span class=normal><a href=#__codelineno-0-30>30</a></span></pre></div></td><td class=code><div><pre><span></span><code><a id=__codelineno-0-1 name=__codelineno-0-1></a>from http import HTTPStatus
+<a id=__codelineno-0-2 name=__codelineno-0-2></a>import dashscope
+<a id=__codelineno-0-3 name=__codelineno-0-3></a>from dashscope.audio.asr import Recognition
+<a id=__codelineno-0-4 name=__codelineno-0-4></a>import os
+<a id=__codelineno-0-5 name=__codelineno-0-5></a>
+<a id=__codelineno-0-6 name=__codelineno-0-6></a># 新加坡和北京地域的API Key不同。获取API Key：https://help.aliyun.com/zh/model-studio/get-api-key
+<a id=__codelineno-0-7 name=__codelineno-0-7></a># 若没有配置环境变量，请用百炼API Key将下行替换为：dashscope.api_key = &quot;sk-xxx&quot;
+<a id=__codelineno-0-8 name=__codelineno-0-8></a>dashscope.api_key = os.environ.get(&#39;DASHSCOPE_API_KEY&#39;)
+<a id=__codelineno-0-9 name=__codelineno-0-9></a>
+<a id=__codelineno-0-10 name=__codelineno-0-10></a># 以下为北京地域url，若使用新加坡地域的模型，需将url替换为：wss://dashscope-intl.aliyuncs.com/api-ws/v1/inference
+<a id=__codelineno-0-11 name=__codelineno-0-11></a>dashscope.base_websocket_api_url=&#39;wss://dashscope.aliyuncs.com/api-ws/v1/inference&#39;
+<a id=__codelineno-0-12 name=__codelineno-0-12></a>
+<a id=__codelineno-0-13 name=__codelineno-0-13></a>recognition = Recognition(model=&#39;fun-asr-realtime&#39;,
+<a id=__codelineno-0-14 name=__codelineno-0-14></a>                          format=&#39;wav&#39;,
+<a id=__codelineno-0-15 name=__codelineno-0-15></a>                          sample_rate=16000,
+<a id=__codelineno-0-16 name=__codelineno-0-16></a>                          callback=None)
+<a id=__codelineno-0-17 name=__codelineno-0-17></a>result = recognition.call(&#39;asr_example.wav&#39;)
+<a id=__codelineno-0-18 name=__codelineno-0-18></a>if result.status_code == HTTPStatus.OK:
+<a id=__codelineno-0-19 name=__codelineno-0-19></a>    print(&#39;识别结果：&#39;)
+<a id=__codelineno-0-20 name=__codelineno-0-20></a>    print(result.get_sentence())
+<a id=__codelineno-0-21 name=__codelineno-0-21></a>else:
+<a id=__codelineno-0-22 name=__codelineno-0-22></a>    print(&#39;Error: &#39;, result.message)
+<a id=__codelineno-0-23 name=__codelineno-0-23></a>
+<a id=__codelineno-0-24 name=__codelineno-0-24></a>print(
+<a id=__codelineno-0-25 name=__codelineno-0-25></a>    &#39;[Metric] requestId: {}, first package delay ms: {}, last package delay ms: {}&#39;
+<a id=__codelineno-0-26 name=__codelineno-0-26></a>    .format(
+<a id=__codelineno-0-27 name=__codelineno-0-27></a>        recognition.get_last_request_id(),
+<a id=__codelineno-0-28 name=__codelineno-0-28></a>        recognition.get_first_package_delay(),
+<a id=__codelineno-0-29 name=__codelineno-0-29></a>        recognition.get_last_package_delay(),
+<a id=__codelineno-0-30 name=__codelineno-0-30></a>    ))
+</code></pre></div></td></tr></table></div> <h3 id=_7><strong>双向流式调用</strong><a class=headerlink href=#_7 title="Permanent link">&para;</a></h3> <p>提交单个语音实时转写任务，通过实现回调接口的方式流式输出实时识别结果。</p> <ol> <li> <p>启动流式语音识别</p> <p>实例化<a href=#44f87473bfp2m>Recognition类</a>绑定<a href=https://help.aliyun.com/zh/model-studio/paraformer-real-time-speech-recognition-python-sdk#555007db2033f>请求参数</a>和<a href=#cec6e96138swr>回调接口（RecognitionCallback）</a>，调用<code>start</code>方法启动流式语音识别。</p> </li> <li> <p>流式传输</p> <p>循环调用<a href=#44f87473bfp2m>Recognition类</a>的<code>send_audio_frame</code>方法，将从本地文件或设备（如麦克风）读取的二进制音频流分段发送至服务端。</p> <p>在发送音频数据的过程中，服务端会通过<a href=#cec6e96138swr>回调接口（RecognitionCallback）</a>的<code>on_event</code>方法，将识别结果实时返回给客户端。</p> <p>建议每次发送的音频时长约为100毫秒，数据大小保持在1KB至16KB之间。</p> </li> <li> <p>结束处理</p> <p>调用<a href=#44f87473bfp2m>Recognition类</a>的<code>stop</code>方法结束语音识别。</p> <p>该方法会阻塞当前线程，直到<a href=#cec6e96138swr>回调接口（RecognitionCallback）</a>的<code>on_complete</code>或者<code>on_error</code>回调触发后才会释放线程阻塞。</p> </li> </ol> <p>点击查看完整示例</p> <h2 id=_8>识别传入麦克风的语音<a class=headerlink href=#_8 title="Permanent link">&para;</a></h2> <div class="language-text highlight"><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal><a href=#__codelineno-1-1>  1</a></span>
+<span class=normal><a href=#__codelineno-1-2>  2</a></span>
+<span class=normal><a href=#__codelineno-1-3>  3</a></span>
+<span class=normal><a href=#__codelineno-1-4>  4</a></span>
+<span class=normal><a href=#__codelineno-1-5>  5</a></span>
+<span class=normal><a href=#__codelineno-1-6>  6</a></span>
+<span class=normal><a href=#__codelineno-1-7>  7</a></span>
+<span class=normal><a href=#__codelineno-1-8>  8</a></span>
+<span class=normal><a href=#__codelineno-1-9>  9</a></span>
+<span class=normal><a href=#__codelineno-1-10> 10</a></span>
+<span class=normal><a href=#__codelineno-1-11> 11</a></span>
+<span class=normal><a href=#__codelineno-1-12> 12</a></span>
+<span class=normal><a href=#__codelineno-1-13> 13</a></span>
+<span class=normal><a href=#__codelineno-1-14> 14</a></span>
+<span class=normal><a href=#__codelineno-1-15> 15</a></span>
+<span class=normal><a href=#__codelineno-1-16> 16</a></span>
+<span class=normal><a href=#__codelineno-1-17> 17</a></span>
+<span class=normal><a href=#__codelineno-1-18> 18</a></span>
+<span class=normal><a href=#__codelineno-1-19> 19</a></span>
+<span class=normal><a href=#__codelineno-1-20> 20</a></span>
+<span class=normal><a href=#__codelineno-1-21> 21</a></span>
+<span class=normal><a href=#__codelineno-1-22> 22</a></span>
+<span class=normal><a href=#__codelineno-1-23> 23</a></span>
+<span class=normal><a href=#__codelineno-1-24> 24</a></span>
+<span class=normal><a href=#__codelineno-1-25> 25</a></span>
+<span class=normal><a href=#__codelineno-1-26> 26</a></span>
+<span class=normal><a href=#__codelineno-1-27> 27</a></span>
+<span class=normal><a href=#__codelineno-1-28> 28</a></span>
+<span class=normal><a href=#__codelineno-1-29> 29</a></span>
+<span class=normal><a href=#__codelineno-1-30> 30</a></span>
+<span class=normal><a href=#__codelineno-1-31> 31</a></span>
+<span class=normal><a href=#__codelineno-1-32> 32</a></span>
+<span class=normal><a href=#__codelineno-1-33> 33</a></span>
+<span class=normal><a href=#__codelineno-1-34> 34</a></span>
+<span class=normal><a href=#__codelineno-1-35> 35</a></span>
+<span class=normal><a href=#__codelineno-1-36> 36</a></span>
+<span class=normal><a href=#__codelineno-1-37> 37</a></span>
+<span class=normal><a href=#__codelineno-1-38> 38</a></span>
+<span class=normal><a href=#__codelineno-1-39> 39</a></span>
+<span class=normal><a href=#__codelineno-1-40> 40</a></span>
+<span class=normal><a href=#__codelineno-1-41> 41</a></span>
+<span class=normal><a href=#__codelineno-1-42> 42</a></span>
+<span class=normal><a href=#__codelineno-1-43> 43</a></span>
+<span class=normal><a href=#__codelineno-1-44> 44</a></span>
+<span class=normal><a href=#__codelineno-1-45> 45</a></span>
+<span class=normal><a href=#__codelineno-1-46> 46</a></span>
+<span class=normal><a href=#__codelineno-1-47> 47</a></span>
+<span class=normal><a href=#__codelineno-1-48> 48</a></span>
+<span class=normal><a href=#__codelineno-1-49> 49</a></span>
+<span class=normal><a href=#__codelineno-1-50> 50</a></span>
+<span class=normal><a href=#__codelineno-1-51> 51</a></span>
+<span class=normal><a href=#__codelineno-1-52> 52</a></span>
+<span class=normal><a href=#__codelineno-1-53> 53</a></span>
+<span class=normal><a href=#__codelineno-1-54> 54</a></span>
+<span class=normal><a href=#__codelineno-1-55> 55</a></span>
+<span class=normal><a href=#__codelineno-1-56> 56</a></span>
+<span class=normal><a href=#__codelineno-1-57> 57</a></span>
+<span class=normal><a href=#__codelineno-1-58> 58</a></span>
+<span class=normal><a href=#__codelineno-1-59> 59</a></span>
+<span class=normal><a href=#__codelineno-1-60> 60</a></span>
+<span class=normal><a href=#__codelineno-1-61> 61</a></span>
+<span class=normal><a href=#__codelineno-1-62> 62</a></span>
+<span class=normal><a href=#__codelineno-1-63> 63</a></span>
+<span class=normal><a href=#__codelineno-1-64> 64</a></span>
+<span class=normal><a href=#__codelineno-1-65> 65</a></span>
+<span class=normal><a href=#__codelineno-1-66> 66</a></span>
+<span class=normal><a href=#__codelineno-1-67> 67</a></span>
+<span class=normal><a href=#__codelineno-1-68> 68</a></span>
+<span class=normal><a href=#__codelineno-1-69> 69</a></span>
+<span class=normal><a href=#__codelineno-1-70> 70</a></span>
+<span class=normal><a href=#__codelineno-1-71> 71</a></span>
+<span class=normal><a href=#__codelineno-1-72> 72</a></span>
+<span class=normal><a href=#__codelineno-1-73> 73</a></span>
+<span class=normal><a href=#__codelineno-1-74> 74</a></span>
+<span class=normal><a href=#__codelineno-1-75> 75</a></span>
+<span class=normal><a href=#__codelineno-1-76> 76</a></span>
+<span class=normal><a href=#__codelineno-1-77> 77</a></span>
+<span class=normal><a href=#__codelineno-1-78> 78</a></span>
+<span class=normal><a href=#__codelineno-1-79> 79</a></span>
+<span class=normal><a href=#__codelineno-1-80> 80</a></span>
+<span class=normal><a href=#__codelineno-1-81> 81</a></span>
+<span class=normal><a href=#__codelineno-1-82> 82</a></span>
+<span class=normal><a href=#__codelineno-1-83> 83</a></span>
+<span class=normal><a href=#__codelineno-1-84> 84</a></span>
+<span class=normal><a href=#__codelineno-1-85> 85</a></span>
+<span class=normal><a href=#__codelineno-1-86> 86</a></span>
+<span class=normal><a href=#__codelineno-1-87> 87</a></span>
+<span class=normal><a href=#__codelineno-1-88> 88</a></span>
+<span class=normal><a href=#__codelineno-1-89> 89</a></span>
+<span class=normal><a href=#__codelineno-1-90> 90</a></span>
+<span class=normal><a href=#__codelineno-1-91> 91</a></span>
+<span class=normal><a href=#__codelineno-1-92> 92</a></span>
+<span class=normal><a href=#__codelineno-1-93> 93</a></span>
+<span class=normal><a href=#__codelineno-1-94> 94</a></span>
+<span class=normal><a href=#__codelineno-1-95> 95</a></span>
+<span class=normal><a href=#__codelineno-1-96> 96</a></span>
+<span class=normal><a href=#__codelineno-1-97> 97</a></span>
+<span class=normal><a href=#__codelineno-1-98> 98</a></span>
+<span class=normal><a href=#__codelineno-1-99> 99</a></span>
+<span class=normal><a href=#__codelineno-1-100>100</a></span>
+<span class=normal><a href=#__codelineno-1-101>101</a></span>
+<span class=normal><a href=#__codelineno-1-102>102</a></span>
+<span class=normal><a href=#__codelineno-1-103>103</a></span>
+<span class=normal><a href=#__codelineno-1-104>104</a></span>
+<span class=normal><a href=#__codelineno-1-105>105</a></span>
+<span class=normal><a href=#__codelineno-1-106>106</a></span>
+<span class=normal><a href=#__codelineno-1-107>107</a></span>
+<span class=normal><a href=#__codelineno-1-108>108</a></span>
+<span class=normal><a href=#__codelineno-1-109>109</a></span>
+<span class=normal><a href=#__codelineno-1-110>110</a></span>
+<span class=normal><a href=#__codelineno-1-111>111</a></span>
+<span class=normal><a href=#__codelineno-1-112>112</a></span>
+<span class=normal><a href=#__codelineno-1-113>113</a></span>
+<span class=normal><a href=#__codelineno-1-114>114</a></span>
+<span class=normal><a href=#__codelineno-1-115>115</a></span>
+<span class=normal><a href=#__codelineno-1-116>116</a></span>
+<span class=normal><a href=#__codelineno-1-117>117</a></span>
+<span class=normal><a href=#__codelineno-1-118>118</a></span></pre></div></td><td class=code><div><pre><span></span><code><a id=__codelineno-1-1 name=__codelineno-1-1></a>import os
+<a id=__codelineno-1-2 name=__codelineno-1-2></a>import signal  # for keyboard events handling (press &quot;Ctrl+C&quot; to terminate recording)
+<a id=__codelineno-1-3 name=__codelineno-1-3></a>import sys
+<a id=__codelineno-1-4 name=__codelineno-1-4></a>
+<a id=__codelineno-1-5 name=__codelineno-1-5></a>import dashscope
+<a id=__codelineno-1-6 name=__codelineno-1-6></a>import pyaudio
+<a id=__codelineno-1-7 name=__codelineno-1-7></a>from dashscope.audio.asr import *
+<a id=__codelineno-1-8 name=__codelineno-1-8></a>
+<a id=__codelineno-1-9 name=__codelineno-1-9></a>mic = None
+<a id=__codelineno-1-10 name=__codelineno-1-10></a>stream = None
+<a id=__codelineno-1-11 name=__codelineno-1-11></a>
+<a id=__codelineno-1-12 name=__codelineno-1-12></a># Set recording parameters
+<a id=__codelineno-1-13 name=__codelineno-1-13></a>sample_rate = 16000  # sampling rate (Hz)
+<a id=__codelineno-1-14 name=__codelineno-1-14></a>channels = 1  # mono channel
+<a id=__codelineno-1-15 name=__codelineno-1-15></a>dtype = &#39;int16&#39;  # data type
+<a id=__codelineno-1-16 name=__codelineno-1-16></a>format_pcm = &#39;pcm&#39;  # the format of the audio data
+<a id=__codelineno-1-17 name=__codelineno-1-17></a>block_size = 3200  # number of frames per buffer
+<a id=__codelineno-1-18 name=__codelineno-1-18></a>
+<a id=__codelineno-1-19 name=__codelineno-1-19></a>
+<a id=__codelineno-1-20 name=__codelineno-1-20></a># Real-time speech recognition callback
+<a id=__codelineno-1-21 name=__codelineno-1-21></a>class Callback(RecognitionCallback):
+<a id=__codelineno-1-22 name=__codelineno-1-22></a>    def on_open(self) -&gt; None:
+<a id=__codelineno-1-23 name=__codelineno-1-23></a>        global mic
+<a id=__codelineno-1-24 name=__codelineno-1-24></a>        global stream
+<a id=__codelineno-1-25 name=__codelineno-1-25></a>        print(&#39;RecognitionCallback open.&#39;)
+<a id=__codelineno-1-26 name=__codelineno-1-26></a>        mic = pyaudio.PyAudio()
+<a id=__codelineno-1-27 name=__codelineno-1-27></a>        stream = mic.open(format=pyaudio.paInt16,
+<a id=__codelineno-1-28 name=__codelineno-1-28></a>                          channels=1,
+<a id=__codelineno-1-29 name=__codelineno-1-29></a>                          rate=16000,
+<a id=__codelineno-1-30 name=__codelineno-1-30></a>                          input=True)
+<a id=__codelineno-1-31 name=__codelineno-1-31></a>
+<a id=__codelineno-1-32 name=__codelineno-1-32></a>    def on_close(self) -&gt; None:
+<a id=__codelineno-1-33 name=__codelineno-1-33></a>        global mic
+<a id=__codelineno-1-34 name=__codelineno-1-34></a>        global stream
+<a id=__codelineno-1-35 name=__codelineno-1-35></a>        print(&#39;RecognitionCallback close.&#39;)
+<a id=__codelineno-1-36 name=__codelineno-1-36></a>        stream.stop_stream()
+<a id=__codelineno-1-37 name=__codelineno-1-37></a>        stream.close()
+<a id=__codelineno-1-38 name=__codelineno-1-38></a>        mic.terminate()
+<a id=__codelineno-1-39 name=__codelineno-1-39></a>        stream = None
+<a id=__codelineno-1-40 name=__codelineno-1-40></a>        mic = None
+<a id=__codelineno-1-41 name=__codelineno-1-41></a>
+<a id=__codelineno-1-42 name=__codelineno-1-42></a>    def on_complete(self) -&gt; None:
+<a id=__codelineno-1-43 name=__codelineno-1-43></a>        print(&#39;RecognitionCallback completed.&#39;)  # recognition completed
+<a id=__codelineno-1-44 name=__codelineno-1-44></a>
+<a id=__codelineno-1-45 name=__codelineno-1-45></a>    def on_error(self, message) -&gt; None:
+<a id=__codelineno-1-46 name=__codelineno-1-46></a>        print(&#39;RecognitionCallback task_id: &#39;, message.request_id)
+<a id=__codelineno-1-47 name=__codelineno-1-47></a>        print(&#39;RecognitionCallback error: &#39;, message.message)
+<a id=__codelineno-1-48 name=__codelineno-1-48></a>        # Stop and close the audio stream if it is running
+<a id=__codelineno-1-49 name=__codelineno-1-49></a>        if &#39;stream&#39; in globals() and stream.active:
+<a id=__codelineno-1-50 name=__codelineno-1-50></a>            stream.stop()
+<a id=__codelineno-1-51 name=__codelineno-1-51></a>            stream.close()
+<a id=__codelineno-1-52 name=__codelineno-1-52></a>        # Forcefully exit the program
+<a id=__codelineno-1-53 name=__codelineno-1-53></a>        sys.exit(1)
+<a id=__codelineno-1-54 name=__codelineno-1-54></a>
+<a id=__codelineno-1-55 name=__codelineno-1-55></a>    def on_event(self, result: RecognitionResult) -&gt; None:
+<a id=__codelineno-1-56 name=__codelineno-1-56></a>        sentence = result.get_sentence()
+<a id=__codelineno-1-57 name=__codelineno-1-57></a>        if &#39;text&#39; in sentence:
+<a id=__codelineno-1-58 name=__codelineno-1-58></a>            print(&#39;RecognitionCallback text: &#39;, sentence[&#39;text&#39;])
+<a id=__codelineno-1-59 name=__codelineno-1-59></a>            if RecognitionResult.is_sentence_end(sentence):
+<a id=__codelineno-1-60 name=__codelineno-1-60></a>                print(
+<a id=__codelineno-1-61 name=__codelineno-1-61></a>                    &#39;RecognitionCallback sentence end, request_id:%s, usage:%s&#39;
+<a id=__codelineno-1-62 name=__codelineno-1-62></a>                    % (result.get_request_id(), result.get_usage(sentence)))
+<a id=__codelineno-1-63 name=__codelineno-1-63></a>
+<a id=__codelineno-1-64 name=__codelineno-1-64></a>
+<a id=__codelineno-1-65 name=__codelineno-1-65></a>def signal_handler(sig, frame):
+<a id=__codelineno-1-66 name=__codelineno-1-66></a>    print(&#39;Ctrl+C pressed, stop recognition ...&#39;)
+<a id=__codelineno-1-67 name=__codelineno-1-67></a>    # Stop recognition
+<a id=__codelineno-1-68 name=__codelineno-1-68></a>    recognition.stop()
+<a id=__codelineno-1-69 name=__codelineno-1-69></a>    print(&#39;Recognition stopped.&#39;)
+<a id=__codelineno-1-70 name=__codelineno-1-70></a>    print(
+<a id=__codelineno-1-71 name=__codelineno-1-71></a>        &#39;[Metric] requestId: {}, first package delay ms: {}, last package delay ms: {}&#39;
+<a id=__codelineno-1-72 name=__codelineno-1-72></a>        .format(
+<a id=__codelineno-1-73 name=__codelineno-1-73></a>            recognition.get_last_request_id(),
+<a id=__codelineno-1-74 name=__codelineno-1-74></a>            recognition.get_first_package_delay(),
+<a id=__codelineno-1-75 name=__codelineno-1-75></a>            recognition.get_last_package_delay(),
+<a id=__codelineno-1-76 name=__codelineno-1-76></a>        ))
+<a id=__codelineno-1-77 name=__codelineno-1-77></a>    # Forcefully exit the program
+<a id=__codelineno-1-78 name=__codelineno-1-78></a>    sys.exit(0)
+<a id=__codelineno-1-79 name=__codelineno-1-79></a>
+<a id=__codelineno-1-80 name=__codelineno-1-80></a>
+<a id=__codelineno-1-81 name=__codelineno-1-81></a># main function
+<a id=__codelineno-1-82 name=__codelineno-1-82></a>if __name__ == &#39;__main__&#39;:
+<a id=__codelineno-1-83 name=__codelineno-1-83></a>    # 新加坡和北京地域的API Key不同。获取API Key：https://help.aliyun.com/zh/model-studio/get-api-key
+<a id=__codelineno-1-84 name=__codelineno-1-84></a>    # 若没有配置环境变量，请用百炼API Key将下行替换为：dashscope.api_key = &quot;sk-xxx&quot;
+<a id=__codelineno-1-85 name=__codelineno-1-85></a>    dashscope.api_key = os.environ.get(&#39;DASHSCOPE_API_KEY&#39;)
+<a id=__codelineno-1-86 name=__codelineno-1-86></a>
+<a id=__codelineno-1-87 name=__codelineno-1-87></a>    # 以下为北京地域url，若使用新加坡地域的模型，需将url替换为：wss://dashscope-intl.aliyuncs.com/api-ws/v1/inference
+<a id=__codelineno-1-88 name=__codelineno-1-88></a>    dashscope.base_websocket_api_url=&#39;wss://dashscope.aliyuncs.com/api-ws/v1/inference&#39;
+<a id=__codelineno-1-89 name=__codelineno-1-89></a>
+<a id=__codelineno-1-90 name=__codelineno-1-90></a>    # Create the recognition callback
+<a id=__codelineno-1-91 name=__codelineno-1-91></a>    callback = Callback()
+<a id=__codelineno-1-92 name=__codelineno-1-92></a>
+<a id=__codelineno-1-93 name=__codelineno-1-93></a>    # Call recognition service by async mode, you can customize the recognition parameters, like model, format,
+<a id=__codelineno-1-94 name=__codelineno-1-94></a>    # sample_rate
+<a id=__codelineno-1-95 name=__codelineno-1-95></a>    recognition = Recognition(
+<a id=__codelineno-1-96 name=__codelineno-1-96></a>        model=&#39;fun-asr-realtime&#39;,
+<a id=__codelineno-1-97 name=__codelineno-1-97></a>        format=format_pcm,
+<a id=__codelineno-1-98 name=__codelineno-1-98></a>        # &#39;pcm&#39;、&#39;wav&#39;、&#39;opus&#39;、&#39;speex&#39;、&#39;aac&#39;、&#39;amr&#39;, you can check the supported formats in the document
+<a id=__codelineno-1-99 name=__codelineno-1-99></a>        sample_rate=sample_rate,
+<a id=__codelineno-1-100 name=__codelineno-1-100></a>        # support 8000, 16000
+<a id=__codelineno-1-101 name=__codelineno-1-101></a>        semantic_punctuation_enabled=False,
+<a id=__codelineno-1-102 name=__codelineno-1-102></a>        callback=callback)
+<a id=__codelineno-1-103 name=__codelineno-1-103></a>
+<a id=__codelineno-1-104 name=__codelineno-1-104></a>    # Start recognition
+<a id=__codelineno-1-105 name=__codelineno-1-105></a>    recognition.start()
+<a id=__codelineno-1-106 name=__codelineno-1-106></a>
+<a id=__codelineno-1-107 name=__codelineno-1-107></a>    signal.signal(signal.SIGINT, signal_handler)
+<a id=__codelineno-1-108 name=__codelineno-1-108></a>    print(&quot;Press &#39;Ctrl+C&#39; to stop recording and recognition...&quot;)
+<a id=__codelineno-1-109 name=__codelineno-1-109></a>    # Create a keyboard listener until &quot;Ctrl+C&quot; is pressed
+<a id=__codelineno-1-110 name=__codelineno-1-110></a>
+<a id=__codelineno-1-111 name=__codelineno-1-111></a>    while True:
+<a id=__codelineno-1-112 name=__codelineno-1-112></a>        if stream:
+<a id=__codelineno-1-113 name=__codelineno-1-113></a>            data = stream.read(3200, exception_on_overflow=False)
+<a id=__codelineno-1-114 name=__codelineno-1-114></a>            recognition.send_audio_frame(data)
+<a id=__codelineno-1-115 name=__codelineno-1-115></a>        else:
+<a id=__codelineno-1-116 name=__codelineno-1-116></a>            break
+<a id=__codelineno-1-117 name=__codelineno-1-117></a>
+<a id=__codelineno-1-118 name=__codelineno-1-118></a>    recognition.stop()
+</code></pre></div></td></tr></table></div> <h2 id=_9>识别本地语音文件<a class=headerlink href=#_9 title="Permanent link">&para;</a></h2> <p>示例中用到的音频为：<a href=https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250210/acoict/asr_example.wav>asr_example.wav</a>。</p> <div class="language-text highlight"><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal><a href=#__codelineno-2-1> 1</a></span>
+<span class=normal><a href=#__codelineno-2-2> 2</a></span>
+<span class=normal><a href=#__codelineno-2-3> 3</a></span>
+<span class=normal><a href=#__codelineno-2-4> 4</a></span>
+<span class=normal><a href=#__codelineno-2-5> 5</a></span>
+<span class=normal><a href=#__codelineno-2-6> 6</a></span>
+<span class=normal><a href=#__codelineno-2-7> 7</a></span>
+<span class=normal><a href=#__codelineno-2-8> 8</a></span>
+<span class=normal><a href=#__codelineno-2-9> 9</a></span>
+<span class=normal><a href=#__codelineno-2-10>10</a></span>
+<span class=normal><a href=#__codelineno-2-11>11</a></span>
+<span class=normal><a href=#__codelineno-2-12>12</a></span>
+<span class=normal><a href=#__codelineno-2-13>13</a></span>
+<span class=normal><a href=#__codelineno-2-14>14</a></span>
+<span class=normal><a href=#__codelineno-2-15>15</a></span>
+<span class=normal><a href=#__codelineno-2-16>16</a></span>
+<span class=normal><a href=#__codelineno-2-17>17</a></span>
+<span class=normal><a href=#__codelineno-2-18>18</a></span>
+<span class=normal><a href=#__codelineno-2-19>19</a></span>
+<span class=normal><a href=#__codelineno-2-20>20</a></span>
+<span class=normal><a href=#__codelineno-2-21>21</a></span>
+<span class=normal><a href=#__codelineno-2-22>22</a></span>
+<span class=normal><a href=#__codelineno-2-23>23</a></span>
+<span class=normal><a href=#__codelineno-2-24>24</a></span>
+<span class=normal><a href=#__codelineno-2-25>25</a></span>
+<span class=normal><a href=#__codelineno-2-26>26</a></span>
+<span class=normal><a href=#__codelineno-2-27>27</a></span>
+<span class=normal><a href=#__codelineno-2-28>28</a></span>
+<span class=normal><a href=#__codelineno-2-29>29</a></span>
+<span class=normal><a href=#__codelineno-2-30>30</a></span>
+<span class=normal><a href=#__codelineno-2-31>31</a></span>
+<span class=normal><a href=#__codelineno-2-32>32</a></span>
+<span class=normal><a href=#__codelineno-2-33>33</a></span>
+<span class=normal><a href=#__codelineno-2-34>34</a></span>
+<span class=normal><a href=#__codelineno-2-35>35</a></span>
+<span class=normal><a href=#__codelineno-2-36>36</a></span>
+<span class=normal><a href=#__codelineno-2-37>37</a></span>
+<span class=normal><a href=#__codelineno-2-38>38</a></span>
+<span class=normal><a href=#__codelineno-2-39>39</a></span>
+<span class=normal><a href=#__codelineno-2-40>40</a></span>
+<span class=normal><a href=#__codelineno-2-41>41</a></span>
+<span class=normal><a href=#__codelineno-2-42>42</a></span>
+<span class=normal><a href=#__codelineno-2-43>43</a></span>
+<span class=normal><a href=#__codelineno-2-44>44</a></span>
+<span class=normal><a href=#__codelineno-2-45>45</a></span>
+<span class=normal><a href=#__codelineno-2-46>46</a></span>
+<span class=normal><a href=#__codelineno-2-47>47</a></span>
+<span class=normal><a href=#__codelineno-2-48>48</a></span>
+<span class=normal><a href=#__codelineno-2-49>49</a></span>
+<span class=normal><a href=#__codelineno-2-50>50</a></span>
+<span class=normal><a href=#__codelineno-2-51>51</a></span>
+<span class=normal><a href=#__codelineno-2-52>52</a></span>
+<span class=normal><a href=#__codelineno-2-53>53</a></span>
+<span class=normal><a href=#__codelineno-2-54>54</a></span>
+<span class=normal><a href=#__codelineno-2-55>55</a></span>
+<span class=normal><a href=#__codelineno-2-56>56</a></span>
+<span class=normal><a href=#__codelineno-2-57>57</a></span>
+<span class=normal><a href=#__codelineno-2-58>58</a></span>
+<span class=normal><a href=#__codelineno-2-59>59</a></span>
+<span class=normal><a href=#__codelineno-2-60>60</a></span>
+<span class=normal><a href=#__codelineno-2-61>61</a></span>
+<span class=normal><a href=#__codelineno-2-62>62</a></span>
+<span class=normal><a href=#__codelineno-2-63>63</a></span>
+<span class=normal><a href=#__codelineno-2-64>64</a></span>
+<span class=normal><a href=#__codelineno-2-65>65</a></span>
+<span class=normal><a href=#__codelineno-2-66>66</a></span>
+<span class=normal><a href=#__codelineno-2-67>67</a></span>
+<span class=normal><a href=#__codelineno-2-68>68</a></span>
+<span class=normal><a href=#__codelineno-2-69>69</a></span>
+<span class=normal><a href=#__codelineno-2-70>70</a></span>
+<span class=normal><a href=#__codelineno-2-71>71</a></span>
+<span class=normal><a href=#__codelineno-2-72>72</a></span>
+<span class=normal><a href=#__codelineno-2-73>73</a></span>
+<span class=normal><a href=#__codelineno-2-74>74</a></span>
+<span class=normal><a href=#__codelineno-2-75>75</a></span>
+<span class=normal><a href=#__codelineno-2-76>76</a></span>
+<span class=normal><a href=#__codelineno-2-77>77</a></span>
+<span class=normal><a href=#__codelineno-2-78>78</a></span>
+<span class=normal><a href=#__codelineno-2-79>79</a></span>
+<span class=normal><a href=#__codelineno-2-80>80</a></span>
+<span class=normal><a href=#__codelineno-2-81>81</a></span>
+<span class=normal><a href=#__codelineno-2-82>82</a></span>
+<span class=normal><a href=#__codelineno-2-83>83</a></span>
+<span class=normal><a href=#__codelineno-2-84>84</a></span>
+<span class=normal><a href=#__codelineno-2-85>85</a></span>
+<span class=normal><a href=#__codelineno-2-86>86</a></span>
+<span class=normal><a href=#__codelineno-2-87>87</a></span>
+<span class=normal><a href=#__codelineno-2-88>88</a></span>
+<span class=normal><a href=#__codelineno-2-89>89</a></span>
+<span class=normal><a href=#__codelineno-2-90>90</a></span>
+<span class=normal><a href=#__codelineno-2-91>91</a></span>
+<span class=normal><a href=#__codelineno-2-92>92</a></span></pre></div></td><td class=code><div><pre><span></span><code><a id=__codelineno-2-1 name=__codelineno-2-1></a>import os
+<a id=__codelineno-2-2 name=__codelineno-2-2></a>import time
+<a id=__codelineno-2-3 name=__codelineno-2-3></a>import dashscope
+<a id=__codelineno-2-4 name=__codelineno-2-4></a>from dashscope.audio.asr import *
+<a id=__codelineno-2-5 name=__codelineno-2-5></a>
+<a id=__codelineno-2-6 name=__codelineno-2-6></a># 新加坡和北京地域的API Key不同。获取API Key：https://help.aliyun.com/zh/model-studio/get-api-key
+<a id=__codelineno-2-7 name=__codelineno-2-7></a># 若没有配置环境变量，请用百炼API Key将下行替换为：dashscope.api_key = &quot;sk-xxx&quot;
+<a id=__codelineno-2-8 name=__codelineno-2-8></a>dashscope.api_key = os.environ.get(&#39;DASHSCOPE_API_KEY&#39;)
+<a id=__codelineno-2-9 name=__codelineno-2-9></a>
+<a id=__codelineno-2-10 name=__codelineno-2-10></a># 以下为北京地域url，若使用新加坡地域的模型，需将url替换为：wss://dashscope-intl.aliyuncs.com/api-ws/v1/inference
+<a id=__codelineno-2-11 name=__codelineno-2-11></a>dashscope.base_websocket_api_url = &#39;wss://dashscope.aliyuncs.com/api-ws/v1/inference&#39;
+<a id=__codelineno-2-12 name=__codelineno-2-12></a>
+<a id=__codelineno-2-13 name=__codelineno-2-13></a>from datetime import datetime
+<a id=__codelineno-2-14 name=__codelineno-2-14></a>
+<a id=__codelineno-2-15 name=__codelineno-2-15></a>
+<a id=__codelineno-2-16 name=__codelineno-2-16></a>def get_timestamp():
+<a id=__codelineno-2-17 name=__codelineno-2-17></a>    now = datetime.now()
+<a id=__codelineno-2-18 name=__codelineno-2-18></a>    formatted_timestamp = now.strftime(&quot;[%Y-%m-%d %H:%M:%S.%f]&quot;)
+<a id=__codelineno-2-19 name=__codelineno-2-19></a>    return formatted_timestamp
+<a id=__codelineno-2-20 name=__codelineno-2-20></a>
+<a id=__codelineno-2-21 name=__codelineno-2-21></a>
+<a id=__codelineno-2-22 name=__codelineno-2-22></a>class Callback(RecognitionCallback):
+<a id=__codelineno-2-23 name=__codelineno-2-23></a>    def on_complete(self) -&gt; None:
+<a id=__codelineno-2-24 name=__codelineno-2-24></a>        print(get_timestamp() + &#39; Recognition completed&#39;)  # recognition complete
+<a id=__codelineno-2-25 name=__codelineno-2-25></a>
+<a id=__codelineno-2-26 name=__codelineno-2-26></a>    def on_error(self, result: RecognitionResult) -&gt; None:
+<a id=__codelineno-2-27 name=__codelineno-2-27></a>        print(&#39;Recognition task_id: &#39;, result.request_id)
+<a id=__codelineno-2-28 name=__codelineno-2-28></a>        print(&#39;Recognition error: &#39;, result.message)
+<a id=__codelineno-2-29 name=__codelineno-2-29></a>        exit(0)
+<a id=__codelineno-2-30 name=__codelineno-2-30></a>
+<a id=__codelineno-2-31 name=__codelineno-2-31></a>    def on_event(self, result: RecognitionResult) -&gt; None:
+<a id=__codelineno-2-32 name=__codelineno-2-32></a>        sentence = result.get_sentence()
+<a id=__codelineno-2-33 name=__codelineno-2-33></a>        if &#39;text&#39; in sentence:
+<a id=__codelineno-2-34 name=__codelineno-2-34></a>            print(get_timestamp() + &#39; RecognitionCallback text: &#39;, sentence[&#39;text&#39;])
+<a id=__codelineno-2-35 name=__codelineno-2-35></a>        if RecognitionResult.is_sentence_end(sentence):
+<a id=__codelineno-2-36 name=__codelineno-2-36></a>            print(get_timestamp() +
+<a id=__codelineno-2-37 name=__codelineno-2-37></a>                  &#39;RecognitionCallback sentence end, request_id:%s, usage:%s&#39;
+<a id=__codelineno-2-38 name=__codelineno-2-38></a>                  % (result.get_request_id(), result.get_usage(sentence)))
+<a id=__codelineno-2-39 name=__codelineno-2-39></a>
+<a id=__codelineno-2-40 name=__codelineno-2-40></a>
+<a id=__codelineno-2-41 name=__codelineno-2-41></a>callback = Callback()
+<a id=__codelineno-2-42 name=__codelineno-2-42></a>
+<a id=__codelineno-2-43 name=__codelineno-2-43></a>recognition = Recognition(model=&#39;fun-asr-realtime&#39;,
+<a id=__codelineno-2-44 name=__codelineno-2-44></a>                          format=&#39;wav&#39;,
+<a id=__codelineno-2-45 name=__codelineno-2-45></a>                          sample_rate=16000,
+<a id=__codelineno-2-46 name=__codelineno-2-46></a>                          callback=callback)
+<a id=__codelineno-2-47 name=__codelineno-2-47></a>
+<a id=__codelineno-2-48 name=__codelineno-2-48></a>try:
+<a id=__codelineno-2-49 name=__codelineno-2-49></a>    audio_data: bytes = None
+<a id=__codelineno-2-50 name=__codelineno-2-50></a>    f = open(&quot;asr_example.wav&quot;, &#39;rb&#39;)
+<a id=__codelineno-2-51 name=__codelineno-2-51></a>    if os.path.getsize(&quot;asr_example.wav&quot;):
+<a id=__codelineno-2-52 name=__codelineno-2-52></a>        # 一次性将文件数据全部读入buffer
+<a id=__codelineno-2-53 name=__codelineno-2-53></a>        file_buffer = f.read()
+<a id=__codelineno-2-54 name=__codelineno-2-54></a>        f.close()
+<a id=__codelineno-2-55 name=__codelineno-2-55></a>        print(&quot;Start Recognition&quot;)
+<a id=__codelineno-2-56 name=__codelineno-2-56></a>        recognition.start()
+<a id=__codelineno-2-57 name=__codelineno-2-57></a>
+<a id=__codelineno-2-58 name=__codelineno-2-58></a>        # 从buffer中间隔3200字节发送一次
+<a id=__codelineno-2-59 name=__codelineno-2-59></a>        buffer_size = len(file_buffer)
+<a id=__codelineno-2-60 name=__codelineno-2-60></a>        offset = 0
+<a id=__codelineno-2-61 name=__codelineno-2-61></a>        chunk_size = 3200
+<a id=__codelineno-2-62 name=__codelineno-2-62></a>
+<a id=__codelineno-2-63 name=__codelineno-2-63></a>        while offset &lt; buffer_size:
+<a id=__codelineno-2-64 name=__codelineno-2-64></a>            # 计算本次要发送的数据块大小
+<a id=__codelineno-2-65 name=__codelineno-2-65></a>            remaining_bytes = buffer_size - offset
+<a id=__codelineno-2-66 name=__codelineno-2-66></a>            current_chunk_size = min(chunk_size, remaining_bytes)
+<a id=__codelineno-2-67 name=__codelineno-2-67></a>
+<a id=__codelineno-2-68 name=__codelineno-2-68></a>            # 从buffer中提取当前数据块
+<a id=__codelineno-2-69 name=__codelineno-2-69></a>            audio_data = file_buffer[offset:offset + current_chunk_size]
+<a id=__codelineno-2-70 name=__codelineno-2-70></a>
+<a id=__codelineno-2-71 name=__codelineno-2-71></a>            # 发送音频数据帧
+<a id=__codelineno-2-72 name=__codelineno-2-72></a>            recognition.send_audio_frame(audio_data)
+<a id=__codelineno-2-73 name=__codelineno-2-73></a>            # 更新偏移量
+<a id=__codelineno-2-74 name=__codelineno-2-74></a>            offset += current_chunk_size
+<a id=__codelineno-2-75 name=__codelineno-2-75></a>
+<a id=__codelineno-2-76 name=__codelineno-2-76></a>            # 添加延迟模拟实时传输
+<a id=__codelineno-2-77 name=__codelineno-2-77></a>            time.sleep(0.1)
+<a id=__codelineno-2-78 name=__codelineno-2-78></a>
+<a id=__codelineno-2-79 name=__codelineno-2-79></a>        recognition.stop()
+<a id=__codelineno-2-80 name=__codelineno-2-80></a>    else:
+<a id=__codelineno-2-81 name=__codelineno-2-81></a>        raise Exception(
+<a id=__codelineno-2-82 name=__codelineno-2-82></a>            &#39;The supplied file was empty (zero bytes long)&#39;)
+<a id=__codelineno-2-83 name=__codelineno-2-83></a>except Exception as e:
+<a id=__codelineno-2-84 name=__codelineno-2-84></a>    raise e
+<a id=__codelineno-2-85 name=__codelineno-2-85></a>
+<a id=__codelineno-2-86 name=__codelineno-2-86></a>print(
+<a id=__codelineno-2-87 name=__codelineno-2-87></a>    &#39;[Metric] requestId: {}, first package delay ms: {}, last package delay ms: {}&#39;
+<a id=__codelineno-2-88 name=__codelineno-2-88></a>    .format(
+<a id=__codelineno-2-89 name=__codelineno-2-89></a>        recognition.get_last_request_id(),
+<a id=__codelineno-2-90 name=__codelineno-2-90></a>        recognition.get_first_package_delay(),
+<a id=__codelineno-2-91 name=__codelineno-2-91></a>        recognition.get_last_package_delay(),
+<a id=__codelineno-2-92 name=__codelineno-2-92></a>    ))
+</code></pre></div></td></tr></table></div> <h2 id=_10><strong>请求参数</strong><a class=headerlink href=#_10 title="Permanent link">&para;</a></h2> <p>请求参数通过<a href=#44f87473bfp2m>Recognition类</a>的构造方法（_init_）进行设置。</p> <table> <thead> <tr> <th><strong>参数</strong></th> <th><strong>类型</strong></th> <th><strong>默认值</strong></th> <th><strong>是否必须</strong></th> <th><strong>说明</strong></th> </tr> </thead> <tbody> <tr> <td>model</td> <td>str</td> <td>\-</td> <td>是</td> <td>用于实时语音识别的模型</td> </tr> <tr> <td>sample\_rate</td> <td>int</td> <td>\-</td> <td>是</td> <td>设置待识别音频采样率（单位Hz）。 fun-asr-realtime支持16000Hz采样。</td> </tr> <tr> <td>format</td> <td>str</td> <td>\-</td> <td>是</td> <td>设置待识别音频格式。 支持的音频格式：pcm、wav、mp3、opus、speex、aac、amr。 <strong>重要</strong> opus/speex：必须使用Ogg封装； wav：必须为PCM编码； amr：仅支持AMR-NB类型。</td> </tr> <tr> <td>vocabulary\_id</td> <td>str</td> <td>\-</td> <td>否</td> <td>热词ID。使用方法参见<a href=https://help.aliyun.com/zh/model-studio/custom-hot-words>定制热词</a>。 默认不设置。</td> </tr> <tr> <td>semantic\_punctuation\_enabled</td> <td>bool</td> <td>False</td> <td>否</td> <td>设置是否开启语义断句，默认关闭。 - true：开启语义断句，关闭VAD（Voice Activity Detection，语音活动检测）断句。 - false（默认）：开启VAD（Voice Activity Detection，语音活动检测）断句，关闭语义断句。 语义断句准确性更高，适合会议转写场景；VAD（Voice Activity Detection，语音活动检测）断句延迟较低，适合交互场景。 通过调整<code>semantic_punctuation_enabled</code>参数，可以灵活切换语音识别的断句方式以适应不同场景需求。</td> </tr> <tr> <td>max\_sentence\_silence</td> <td>int</td> <td>1300</td> <td>否</td> <td>设置VAD（Voice Activity Detection，语音活动检测）断句的静音时长阈值（单位为ms）。 当一段语音后的静音时长超过该阈值时，系统会判定该句子已结束。 参数范围为200ms至6000ms，默认值为1300ms。 该参数仅在<code>semantic_punctuation_enabled</code>参数为false（VAD断句）时生效。</td> </tr> <tr> <td>multi\_threshold\_mode\_enabled</td> <td>bool</td> <td>False</td> <td>否</td> <td>该开关打开时（true）可以防止VAD断句切割过长。默认关闭。 该参数仅在<code>semantic_punctuation_enabled</code>参数为false（VAD断句）时生效。</td> </tr> <tr> <td>punctuation\_prediction\_enabled</td> <td>bool</td> <td>True</td> <td>否</td> <td>设置是否在识别结果中自动添加标点： - true（默认）：是，不支持修改。</td> </tr> <tr> <td>heartbeat</td> <td>bool</td> <td>False</td> <td>否</td> <td>当需要与服务端保持长连接时，可通过该开关进行控制： - true：在持续发送静音音频的情况下，可保持与服务端的连接不中断。 - false（默认）：即使持续发送静音音频，连接也将在60秒后因超时而断开。 静音音频指的是在音频文件或数据流中没有声音信号的内容。静音音频可以通过多种方法生成，例如使用音频编辑软件如Audacity或Adobe Audition，或者通过命令行工具如FFmpeg。 使用该字段时，SDK版本不能低于1.23.1。</td> </tr> <tr> <td>language\_hints</td> <td>list\[str\]</td> <td>\["zh", "en"\]</td> <td>否</td> <td>设置待识别语言代码。如果无法提前确定语种，可不设置，模型会自动识别语种。 不同模型支持的语言代码如下： - fun-asr-realtime、fun-asr-realtime-2025-11-07： - zh: 中文 - en: 英文 - ja: 日语 - fun-asr-realtime-2025-09-15： - zh: 中文 - en: 英文</td> </tr> <tr> <td>speech\_noise\_threshold</td> <td>float</td> <td>\-</td> <td>否</td> <td>控制语音与噪音的判定阈值，用于调整语音活动检测（VAD）的灵敏度。 取值范围：\[-1.0, 1.0\]。 取值说明： - 取值越接近 -1：降低噪音判定阈值，噪音被识别为语音的概率增大，可能导致更多噪音被转写 - 取值越接近 +1：提高噪音判定阈值，语音被误判为噪音的概率增大，可能导致部分语音被过滤 <strong>重要</strong> 此参数为高级配置参数，调整可能显著影响识别效果，建议： - 调整前充分测试验证效果 - 根据实际音频环境小幅度调整（建议步长 0.1）</td> </tr> <tr> <td>callback</td> <td>RecognitionCallback</td> <td>\-</td> <td>否</td> <td><a href=#cec6e96138swr>回调接口（RecognitionCallback）</a>。</td> </tr> </tbody> </table> <h2 id=_11><strong>关键接口</strong><a class=headerlink href=#_11 title="Permanent link">&para;</a></h2> <h3 id=recognition><code>Recognition</code>类<a class=headerlink href=#recognition title="Permanent link">&para;</a></h3> <p><code>Recognition</code>通过“<code>from dashscope.audio.asr import *</code>”方式引入。</p> <table> <thead> <tr> <th><strong>成员方法</strong></th> <th><strong>方法签名</strong></th> <th><strong>说明</strong></th> </tr> </thead> <tbody> <tr> <td>call</td> <td><code>def call(self, file: str, phrase_id: str = None, **kwargs) -&gt; RecognitionResult</code></td> <td>基于本地文件的非流式调用，该方法会阻塞当前线程直到全部音频读完，该方法要求所识别文件具有可读权限。 识别结果以<code>RecognitionResult</code>类型数据返回。</td> </tr> <tr> <td>start</td> <td><code>def start(self, phrase_id: str = None, **kwargs)</code></td> <td>开始语音识别。 基于回调形式的流式实时识别，该方法不会阻塞当前线程。需要配合<code>send_audio_frame</code>和<code>stop</code>使用。</td> </tr> <tr> <td>send\_audio\_frame</td> <td><code>def send_audio_frame(self, buffer: bytes)</code></td> <td>推送音频。每次推送的音频流不宜过大或过小，建议每包音频时长为100ms左右，大小在1KB~16KB之间。 识别结果通过<a href=#cec6e96138swr>回调接口（RecognitionCallback）</a>的on\_event方法获取。</td> </tr> <tr> <td>stop</td> <td><code>def stop(self)</code></td> <td>停止语音识别，阻塞到服务将收到的音频都识别后结束任务。</td> </tr> <tr> <td>get\_last\_request\_id</td> <td><code>def get_last_request_id(self)</code></td> <td>获取request\_id，在构造函数调用（创建对象）后可以使用。</td> </tr> <tr> <td>get\_first\_package\_delay</td> <td><code>def get_first_package_delay(self)</code></td> <td>获取首包延迟，从发送第一包音频到收到首包识别结果延迟，在任务完成后使用。</td> </tr> <tr> <td>get\_last\_package\_delay</td> <td><code>def get_last_package_delay(self)</code></td> <td>获得尾包延迟，发送<code>stop</code>指令到最后一包识别结果下发耗时，在任务完成后使用。</td> </tr> <tr> <td>get\_response</td> <td><code>def get_response(self)</code></td> <td>获取最后一次报文，可以用于获取task-failed报错。</td> </tr> </tbody> </table> <h3 id=recognitioncallback><strong>回调接口（</strong><code>RecognitionCallback</code>）<a class=headerlink href=#recognitioncallback title="Permanent link">&para;</a></h3> <p><a href=#7b019225eeqet>双向流式调用</a>时，服务端会通过回调的方式，将关键流程信息和数据返回给客户端。您需要实现回调方法，处理服务端返回的信息或者数据。</p> <p>点击查看示例</p> <div class="language-text highlight"><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal><a href=#__codelineno-3-1> 1</a></span>
+<span class=normal><a href=#__codelineno-3-2> 2</a></span>
+<span class=normal><a href=#__codelineno-3-3> 3</a></span>
+<span class=normal><a href=#__codelineno-3-4> 4</a></span>
+<span class=normal><a href=#__codelineno-3-5> 5</a></span>
+<span class=normal><a href=#__codelineno-3-6> 6</a></span>
+<span class=normal><a href=#__codelineno-3-7> 7</a></span>
+<span class=normal><a href=#__codelineno-3-8> 8</a></span>
+<span class=normal><a href=#__codelineno-3-9> 9</a></span>
+<span class=normal><a href=#__codelineno-3-10>10</a></span>
+<span class=normal><a href=#__codelineno-3-11>11</a></span>
+<span class=normal><a href=#__codelineno-3-12>12</a></span>
+<span class=normal><a href=#__codelineno-3-13>13</a></span>
+<span class=normal><a href=#__codelineno-3-14>14</a></span>
+<span class=normal><a href=#__codelineno-3-15>15</a></span>
+<span class=normal><a href=#__codelineno-3-16>16</a></span>
+<span class=normal><a href=#__codelineno-3-17>17</a></span>
+<span class=normal><a href=#__codelineno-3-18>18</a></span></pre></div></td><td class=code><div><pre><span></span><code><a id=__codelineno-3-1 name=__codelineno-3-1></a>class Callback(RecognitionCallback):
+<a id=__codelineno-3-2 name=__codelineno-3-2></a>    def on_open(self) -&gt; None:
+<a id=__codelineno-3-3 name=__codelineno-3-3></a>        print(&#39;连接成功&#39;)
+<a id=__codelineno-3-4 name=__codelineno-3-4></a>
+<a id=__codelineno-3-5 name=__codelineno-3-5></a>    def on_event(self, result: RecognitionResult) -&gt; None:
+<a id=__codelineno-3-6 name=__codelineno-3-6></a>        # 实现接收识别结果的逻辑
+<a id=__codelineno-3-7 name=__codelineno-3-7></a>
+<a id=__codelineno-3-8 name=__codelineno-3-8></a>    def on_complete(self) -&gt; None:
+<a id=__codelineno-3-9 name=__codelineno-3-9></a>        print(&#39;任务完成&#39;)
+<a id=__codelineno-3-10 name=__codelineno-3-10></a>
+<a id=__codelineno-3-11 name=__codelineno-3-11></a>    def on_error(self, result: RecognitionResult) -&gt; None:
+<a id=__codelineno-3-12 name=__codelineno-3-12></a>        print(&#39;出现异常：&#39;, result)
+<a id=__codelineno-3-13 name=__codelineno-3-13></a>
+<a id=__codelineno-3-14 name=__codelineno-3-14></a>    def on_close(self) -&gt; None:
+<a id=__codelineno-3-15 name=__codelineno-3-15></a>        print(&#39;连接关闭&#39;)
+<a id=__codelineno-3-16 name=__codelineno-3-16></a>
+<a id=__codelineno-3-17 name=__codelineno-3-17></a>
+<a id=__codelineno-3-18 name=__codelineno-3-18></a>callback = Callback()
+</code></pre></div></td></tr></table></div> <table> <thead> <tr> <th><strong>方法</strong></th> <th><strong>参数</strong></th> <th><strong>返回值</strong></th> <th><strong>描述</strong></th> </tr> </thead> <tbody> <tr> <td><code>def on_open(self) -&gt; None</code></td> <td>无</td> <td>无</td> <td>当和服务端建立连接完成后，该方法立刻被回调。</td> </tr> <tr> <td><code>def on_event(self, result: RecognitionResult) -&gt; None</code></td> <td><code>result</code>：<a href=https://help.aliyun.com/zh/model-studio/paraformer-real-time-speech-recognition-python-sdk#bc3e1a43d6hhy>识别结果（RecognitionResult）</a></td> <td>无</td> <td>当服务有回复时会被回调。</td> </tr> <tr> <td><code>def on_complete(self) -&gt; None</code></td> <td>无</td> <td>无</td> <td>当所有识别结果全部返回后进行回调。</td> </tr> <tr> <td><code>def on_error(self, result: RecognitionResult) -&gt; None</code></td> <td><code>result</code>：<a href=https://help.aliyun.com/zh/model-studio/paraformer-real-time-speech-recognition-python-sdk#bc3e1a43d6hhy>识别结果（RecognitionResult）</a></td> <td>无</td> <td>发生异常时该方法被回调。</td> </tr> <tr> <td><code>def on_close(self) -&gt; None</code></td> <td>无</td> <td>无</td> <td>当服务已经关闭连接后进行回调。</td> </tr> </tbody> </table> <h2 id=_12><strong>响应结果</strong><a class=headerlink href=#_12 title="Permanent link">&para;</a></h2> <h3 id=recognitionresult><strong>识别结果（</strong><code>**RecognitionResult**</code><strong>）</strong><a class=headerlink href=#recognitionresult title="Permanent link">&para;</a></h3> <p><code>RecognitionResult</code>代表<a href=https://help.aliyun.com/zh/model-studio/paraformer-real-time-speech-recognition-python-sdk#9d1e5f6852jr8>双向流式调用</a>中一次实时识别或<a href=https://help.aliyun.com/zh/model-studio/paraformer-real-time-speech-recognition-python-sdk#8341058094tc3>非流式调用</a>的识别结果。</p> <table> <thead> <tr> <th><strong>成员方法</strong></th> <th><strong>方法签名</strong></th> <th><strong>说明</strong></th> </tr> </thead> <tbody> <tr> <td>get\_sentence</td> <td><code>def get_sentence(self) -&gt; Union[Dict[str, Any], List[Any]]</code></td> <td>获取当前识别的句子及时间戳信息。回调中返回的是单句信息，所以此方法返回类型为Dict\[str, Any\]。 详情请参见<a href=https://help.aliyun.com/zh/model-studio/paraformer-real-time-speech-recognition-python-sdk#f28f50b035qtn>单句信息（Sentence）</a>。</td> </tr> <tr> <td>get\_request\_id</td> <td><code>def get_request_id(self) -&gt; str</code></td> <td>获取请求的request\_id。</td> </tr> <tr> <td>is\_sentence\_end</td> <td><code>@staticmethod def is_sentence_end(sentence: Dict[str, Any]) -&gt; bool</code></td> <td>判断给定句子是否已经结束。</td> </tr> </tbody> </table> <h3 id=sentence>单句信息（<code>Sentence</code>）<a class=headerlink href=#sentence title="Permanent link">&para;</a></h3> <p>Sentence类成员如下：</p> <table> <thead> <tr> <th><strong>参数</strong></th> <th><strong>类型</strong></th> <th><strong>说明</strong></th> </tr> </thead> <tbody> <tr> <td>begin\_time</td> <td>int</td> <td>句子开始时间，单位为ms。</td> </tr> <tr> <td>end\_time</td> <td>int</td> <td>句子结束时间，单位为ms。</td> </tr> <tr> <td>text</td> <td>str</td> <td>识别文本。</td> </tr> <tr> <td>words</td> <td><a href=#b55a7391caxxe>字时间戳信息（Word）</a>的list集合</td> <td>字时间戳信息。</td> </tr> </tbody> </table> <h3 id=word><strong>字时间戳信息（</strong><code>**Word**</code><strong>）</strong><a class=headerlink href=#word title="Permanent link">&para;</a></h3> <p>Word类成员如下：</p> <table> <thead> <tr> <th><strong>参数</strong></th> <th><strong>类型</strong></th> <th><strong>说明</strong></th> </tr> </thead> <tbody> <tr> <td>begin\_time</td> <td>int</td> <td>字开始时间，单位为ms。</td> </tr> <tr> <td>end\_time</td> <td>int</td> <td>字结束时间，单位为ms。</td> </tr> <tr> <td>text</td> <td>str</td> <td>字。</td> </tr> <tr> <td>punctuation</td> <td>str</td> <td>标点。</td> </tr> </tbody> </table> <h2 id=_13><strong>错误码</strong><a class=headerlink href=#_13 title="Permanent link">&para;</a></h2> <p>如遇报错问题，请参见<a href=https://help.aliyun.com/zh/model-studio/error-code>错误信息</a>进行排查。</p> <p>若问题仍未解决，请加入<a href=https://github.com/aliyun/alibabacloud-bailian-speech-demo>开发者群</a>反馈遇到的问题，并提供Request ID，以便进一步排查问题。</p> <h2 id=_14><strong>常见问题</strong><a class=headerlink href=#_14 title="Permanent link">&para;</a></h2> <h3 id=_15><strong>功能特性</strong><a class=headerlink href=#_15 title="Permanent link">&para;</a></h3> <h4 id=q><strong>Q：在长时间静默的情况下，如何保持与服务端长连接？</strong><a class=headerlink href=#q title="Permanent link">&para;</a></h4> <p>将请求参数<code>heartbeat</code>设置为true，并持续向服务端发送静音音频。</p> <p>静音音频指的是在音频文件或数据流中没有声音信号的内容。静音音频可以通过多种方法生成，例如使用音频编辑软件如Audacity或Adobe Audition，或者通过命令行工具如FFmpeg。</p> <h4 id=q_1><strong>Q：如何将音频格式转换为满足要求的格式？</strong><a class=headerlink href=#q_1 title="Permanent link">&para;</a></h4> <p>可使用<a href=https://ffmpeg.en.lo4d.com/download>FFmpeg工具</a>，更多用法请参见FFmpeg官网。</p> <div class="language-text highlight"><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal><a href=#__codelineno-4-1> 1</a></span>
+<span class=normal><a href=#__codelineno-4-2> 2</a></span>
+<span class=normal><a href=#__codelineno-4-3> 3</a></span>
+<span class=normal><a href=#__codelineno-4-4> 4</a></span>
+<span class=normal><a href=#__codelineno-4-5> 5</a></span>
+<span class=normal><a href=#__codelineno-4-6> 6</a></span>
+<span class=normal><a href=#__codelineno-4-7> 7</a></span>
+<span class=normal><a href=#__codelineno-4-8> 8</a></span>
+<span class=normal><a href=#__codelineno-4-9> 9</a></span>
+<span class=normal><a href=#__codelineno-4-10>10</a></span>
+<span class=normal><a href=#__codelineno-4-11>11</a></span>
+<span class=normal><a href=#__codelineno-4-12>12</a></span>
+<span class=normal><a href=#__codelineno-4-13>13</a></span>
+<span class=normal><a href=#__codelineno-4-14>14</a></span>
+<span class=normal><a href=#__codelineno-4-15>15</a></span>
+<span class=normal><a href=#__codelineno-4-16>16</a></span>
+<span class=normal><a href=#__codelineno-4-17>17</a></span>
+<span class=normal><a href=#__codelineno-4-18>18</a></span></pre></div></td><td class=code><div><pre><span></span><code><a id=__codelineno-4-1 name=__codelineno-4-1></a># 基础转换命令（万能模板）
+<a id=__codelineno-4-2 name=__codelineno-4-2></a># -i，作用：输入文件路径，常用值示例：audio.wav
+<a id=__codelineno-4-3 name=__codelineno-4-3></a># -c:a，作用：音频编码器，常用值示例：aac, libmp3lame, pcm_s16le
+<a id=__codelineno-4-4 name=__codelineno-4-4></a># -b:a，作用：比特率（音质控制），常用值示例：192k, 320k
+<a id=__codelineno-4-5 name=__codelineno-4-5></a># -ar，作用：采样率，常用值示例：44100 (CD), 48000, 16000
+<a id=__codelineno-4-6 name=__codelineno-4-6></a># -ac，作用：声道数，常用值示例：1(单声道), 2(立体声)
+<a id=__codelineno-4-7 name=__codelineno-4-7></a># -y，作用：覆盖已存在文件(无需值)
+<a id=__codelineno-4-8 name=__codelineno-4-8></a>ffmpeg -i input_audio.ext -c:a 编码器名 -b:a 比特率 -ar 采样率 -ac 声道数 output.ext
+<a id=__codelineno-4-9 name=__codelineno-4-9></a>
+<a id=__codelineno-4-10 name=__codelineno-4-10></a># 例如：WAV → MP3（保持原始质量）
+<a id=__codelineno-4-11 name=__codelineno-4-11></a>ffmpeg -i input.wav -c:a libmp3lame -q:a 0 output.mp3
+<a id=__codelineno-4-12 name=__codelineno-4-12></a># 例如：MP3 → WAV（16bit PCM标准格式）
+<a id=__codelineno-4-13 name=__codelineno-4-13></a>ffmpeg -i input.mp3 -c:a pcm_s16le -ar 44100 -ac 2 output.wav
+<a id=__codelineno-4-14 name=__codelineno-4-14></a># 例如：M4A → AAC（提取/转换苹果音频）
+<a id=__codelineno-4-15 name=__codelineno-4-15></a>ffmpeg -i input.m4a -c:a copy output.aac  # 直接提取不重编码
+<a id=__codelineno-4-16 name=__codelineno-4-16></a>ffmpeg -i input.m4a -c:a aac -b:a 256k output.aac  # 重编码提高质量
+<a id=__codelineno-4-17 name=__codelineno-4-17></a># 例如：FLAC无损 → Opus（高压缩）
+<a id=__codelineno-4-18 name=__codelineno-4-18></a>ffmpeg -i input.flac -c:a libopus -b:a 128k -vbr on output.opus
+</code></pre></div></td></tr></table></div> <h4 id=q_2><strong>Q：如何识别本地文件（录音文件）？</strong><a class=headerlink href=#q_2 title="Permanent link">&para;</a></h4> <p>识别本地文件有两种方式：</p> <ul> <li> <p>直接传入本地文件路径：此种方式在最终识别结束后获取完整识别结果，不适合即时反馈的场景。</p> <p>参见<a href=#881157aa56lll>非流式调用</a>，在<a href=#44f87473bfp2m>Recognition类</a>的<code>call</code>方法中传入文件路径对录音文件直接进行识别。</p> </li> <li> <p>将本地文件转成二进制流进行识别：此种方式一边识别文件一边流式获取识别结果，适合即时反馈的场景。</p> <p>参见<a href=#7b019225eeqet>双向流式调用</a>，通过<a href=#44f87473bfp2m>Recognition类</a>的<code>send_audio_frame</code>方法向服务端发送二进制流对其进行识别。</p> </li> </ul> <h3 id=_16><strong>故障排查</strong><a class=headerlink href=#_16 title="Permanent link">&para;</a></h3> <h4 id=q_3><strong>Q：无法识别语音（无识别结果）是什么原因？</strong><a class=headerlink href=#q_3 title="Permanent link">&para;</a></h4> <ol> <li> <p>请检查请求参数中的音频格式（<code>format</code>）和采样率（<code>sampleRate</code>/<code>sample_rate</code>）设置是否正确且符合参数约束。以下为常见错误示例：</p> <ul> <li> <p>音频文件扩展名为 .wav，但实际为 MP3 格式，而请求参数 <code>format</code> 设置为 mp3（参数设置错误）。</p> </li> <li> <p>音频采样率为 3600Hz，但请求参数 <code>sampleRate</code>/<code>sample_rate</code> 设置为 48000（参数设置错误）。</p> </li> </ul> <p>可以使用<a href=https://ffmpeg.org/ffprobe.html>ffprobe</a>工具获取音频的容器、编码、采样率、声道等信息：</p> <div class="language-text highlight"><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal><a href=#__codelineno-5-1>1</a></span></pre></div></td><td class=code><div><pre><span></span><code><a id=__codelineno-5-1 name=__codelineno-5-1></a>ffprobe -v error -show_entries format=format_name -show_entries stream=codec_name,sample_rate,channels -of default=noprint_wrappers=1 input.xxx
+</code></pre></div></td></tr></table></div> </li> <li> <p>若以上检查均无问题，可通过定制热词提升对特定词语的识别效果。</p> </li> </ol> <aside class=md-source-file> <span class=md-source-file__fact> <span class=md-icon title=最后更新> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg> </span> <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_datetime" title="2026年3月5日 09:54:10 UTC">2026-03-05 09:54:10</span> </span> <span class=md-source-file__fact> <span class=md-icon title=创建日期> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg> </span> <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_datetime" title="2026年3月5日 09:54:10 UTC">2026-03-05 09:54:10</span> </span> </aside> <section class=giscus-shell aria-label=评论区> <h2 class=giscus-shell__title>评论区</h2> <script src=https://giscus.app/client.js data-repo=ouyangyipeng/ClassAssistant data-repo-id=R_kgDORfBNUQ data-category=General data-category-id=DIC_kwDORfBNUc4C30oY data-mapping=pathname data-strict=1 data-reactions-enabled=1 data-emit-metadata=0 data-input-position=bottom data-theme=preferred_color_scheme data-lang=zh-CN data-loading=lazy crossorigin=anonymous async></script> </section> <section class=giscus-shell aria-label=评论区> <h2 class=giscus-shell__title>评论区</h2> <script src=https://giscus.app/client.js data-repo=ouyangyipeng/ClassAssistant data-repo-id=R_kgDORfBNUQ data-category=General data-category-id=DIC_kwDORfBNUc4C30oY data-mapping=pathname data-strict=1 data-reactions-enabled=1 data-emit-metadata=0 data-input-position=bottom data-theme=preferred_color_scheme data-lang=zh-CN data-loading=lazy crossorigin=anonymous async></script> </section> </article> </div> <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script> <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script> </div> <button type=button class="md-top md-icon" data-md-component=top hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg> 回到页面顶部 </button> </main> <footer class=md-footer> <nav class="md-footer__inner md-grid" aria-label=页脚> <a href=../%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/ class="md-footer__link md-footer__link--prev" aria-label="上一页: 历史开发说明"> <div class="md-footer__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg> </div> <div class=md-footer__title> <span class=md-footer__direction> 上一页 </span> <div class=md-ellipsis> 历史开发说明 </div> </div> </a> <a href=../seed-asr-api/ class="md-footer__link md-footer__link--next" aria-label="下一页: Seed-ASR 协议"> <div class=md-footer__title> <span class=md-footer__direction> 下一页 </span> <div class=md-ellipsis> Seed-ASR 协议 </div> </div> <div class="md-footer__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg> </div> </a> </nav> <div class="md-footer-meta md-typeset"> <div class="md-footer-meta__inner md-grid"> <div class=md-copyright> <div class=md-copyright__highlight> Copyright © 2026 ouyangyipeng </div> </div> <div class=md-social> <a href=https://github.com/ouyangyipeng/ClassAssistant target=_blank rel=noopener title=github.com class=md-social__link> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 512 512"><!-- Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg> </a> </div> </div> </div> </footer> </div> <div class=md-dialog data-md-component=dialog> <div class="md-dialog__inner md-typeset"></div> </div> <div class=md-progress data-md-component=progress role=progressbar></div> <script id=__config type=application/json>{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.prune", "navigation.top", "navigation.footer", "navigation.indexes", "toc.follow", "search.highlight", "search.suggest", "content.code.copy", "content.code.select", "content.tabs.link"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script> <script src=../assets/javascripts/bundle.79ae519e.min.js></script> <script src=../javascripts/giscus.js></script> </body> </html>
