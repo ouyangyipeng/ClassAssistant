@@ -4,14 +4,18 @@
 启动命令: uvicorn main:app --host 0.0.0.0 --port 8765 --reload
 """
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
 import os
 import sys
 
+from dotenv import load_dotenv
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 # 加载环境变量 —— 明确指定 .env 路径，避免打包版加载到开发目录的 .env
-if getattr(sys, 'frozen', False):
+_env_path_override = os.getenv("CLASSFOX_ENV_PATH")
+if _env_path_override:
+    _dotenv_path = os.path.abspath(_env_path_override)
+elif getattr(sys, 'frozen', False):
     _dotenv_path = os.path.join(os.path.dirname(sys.executable), '.env')
 else:
     _dotenv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')

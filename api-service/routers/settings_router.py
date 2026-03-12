@@ -14,7 +14,11 @@ from pydantic import BaseModel
 router = APIRouter()
 
 
-if getattr(sys, 'frozen', False):
+_env_path_override = os.getenv("CLASSFOX_ENV_PATH")
+
+if _env_path_override:
+    ENV_PATH = os.path.abspath(_env_path_override)
+elif getattr(sys, 'frozen', False):
     ENV_PATH = os.path.join(os.path.dirname(sys.executable), '.env')
 else:
     ENV_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env')

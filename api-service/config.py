@@ -7,7 +7,11 @@
 import os
 import sys
 
-if getattr(sys, 'frozen', False):
+_runtime_root = os.getenv("CLASSFOX_PROJECT_ROOT")
+
+if _runtime_root:
+    PROJECT_ROOT = os.path.abspath(_runtime_root)
+elif getattr(sys, 'frozen', False):
     # PyInstaller 打包模式：exe 位于 release/backend/，data 在 release/data/
     _exe_dir = os.path.dirname(os.path.abspath(sys.executable))
     PROJECT_ROOT = os.path.dirname(_exe_dir)

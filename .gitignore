@@ -36,5 +36,6 @@ Thumbs.db
 # ---- 构建产物 ----
 api-service/build/
 api-service/dist/
+app-ui/src-tauri/backend/
 release/
 *.zip
