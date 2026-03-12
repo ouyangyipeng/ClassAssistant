@@ -78,31 +78,28 @@ a = Analysis(
 
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
+# Filter out corrupted DLLs picked up from tesseract on system PATH
+excluded_dlls = {'libfribidi-0.dll'}
+filtered_binaries = [b for b in a.binaries if b[0].lower() not in excluded_dlls]
+
 exe = EXE(
     pyz,
     a.scripts,
+    filtered_binaries,
+    a.zipfiles,
+    a.datas,
     [],
-    exclude_binaries=True,
     name='class-assistant-backend',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=False,
-    icon=None,
-)
-
-# Filter out corrupted DLLs picked up from tesseract on system PATH
-excluded_dlls = {'libfribidi-0.dll'}
-filtered_binaries = [b for b in a.binaries if b[0].lower() not in excluded_dlls]
-
-coll = COLLECT(
-    exe,
-    filtered_binaries,
-    a.zipfiles,
-    a.datas,
-    strip=False,
-    upx=True,
     upx_exclude=[],
-    name='class-assistant-backend',
+    runtime_tmpdir=None,
+    console=sys.platform == 'darwin',
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
 )
