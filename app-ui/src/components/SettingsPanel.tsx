@@ -29,9 +29,19 @@ const ENV_SECTIONS: Array<{ title: string; fields: EnvFieldConfig[] }> = [
         type: "select",
         options: [
           { label: "本地识别 local", value: "local" },
+          { label: "Edge / 浏览器识别 webspeech", value: "webspeech" },
           { label: "Mock 测试", value: "mock" },
           { label: "DashScope", value: "dashscope" },
           { label: "Seed-ASR", value: "seed-asr" },
+        ],
+      },
+      {
+        key: "WEBSPEECH_LANG",
+        label: "WebSpeech 语言",
+        type: "select",
+        options: [
+          { label: "中文 zh-CN", value: "zh-CN" },
+          { label: "英文 en-US", value: "en-US" },
         ],
       },
       { key: "API_PORT", label: "后端端口", type: "number", placeholder: "8765" },
@@ -212,18 +222,25 @@ export default function SettingsPanel({ visible, onClose, onSaved }: SettingsPan
                     <label key={field.key} className="flex flex-col gap-1">
                       <span className="text-[10px] text-white/58">{field.label}</span>
                       {field.type === "select" ? (
-                        <select
-                          value={envValues[field.key] || ""}
-                          onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                          className="rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-xs text-white outline-none transition focus:border-cyan-400/50"
-                        >
-                          <option value="">请选择</option>
-                          {field.options?.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
+                        <>
+                          <select
+                            value={envValues[field.key] || ""}
+                            onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                            className="rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-xs text-white outline-none transition focus:border-cyan-400/50"
+                          >
+                            <option value="">请选择</option>
+                            {field.options?.map((option) => (
+                              <option key={option.value} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </select>
+                          {field.key === "ASR_MODE" ? (
+                            <span className="text-[10px] text-white/45">webspeech 依赖 Edge/WebView2 的 SpeechRecognition，并需要麦克风权限。</span>
+                          ) : field.key === "WEBSPEECH_LANG" ? (
+                            <span className="text-[10px] text-white/45">仅在 webspeech 模式下生效，默认使用 zh-CN。</span>
+                          ) : null}
+                        </>
                       ) : (
                         <input
                           type={field.type ?? "text"}

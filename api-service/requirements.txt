@@ -18,8 +18,9 @@ pypdf>=4.0.0
 # Word 文档解析
 python-docx>=1.1.0
 
-# 音频录制
-pyaudio==0.2.14
+# 音频录制（可选）
+# 默认依赖不强制安装 PyAudio，便于 webspeech/browser-only 模式开箱可用。
+# 需要麦克风采集模式（local / dashscope / seed-asr）时，请额外安装 requirements-mic.txt。
 
 # OpenAI Compatible API 调用
 openai==1.58.1

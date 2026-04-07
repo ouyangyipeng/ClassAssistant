@@ -50,7 +50,7 @@
 
 | 功能 | 说明 |
 | ------ | ------ |
-| 🎙️ 实时语音监控 | Local ASR / Seed-ASR / DashScope / Mock 多模式切换 |
+| 🎙️ 实时语音监控 | Local ASR / WebSpeech / Seed-ASR / DashScope / Mock 多模式切换 |
 | 🧹 去重转录 | 流式识别结果按句落盘，过滤重复、碎片标点和相近修正文 |
 | 🧠 滚动课堂摘要 | 每累计 50 条课堂记录，自动压缩为一段历史摘要，减小上下文体积 |
 | 🚨 点名预警 | 命中关键词后通过 WebSocket 推送红色警报弹层 |
@@ -99,6 +99,12 @@ python -m venv .venv
 .venv\Scripts\pip install pyinstaller
 ```
 
+如果你要使用麦克风采集模式（`local` / `dashscope` / `seed-asr`），再额外安装：
+
+```bash
+.venv\Scripts\pip install -r requirements-mic.txt
+```
+
 ### 3. 配置前端依赖
 
 ```bash
@@ -111,8 +117,11 @@ npm install
 在 api-service 下创建 .env，可参考 .env.example：
 
 ```env
-# ASR 模式: local | mock | dashscope | seed-asr
+# ASR 模式: local | webspeech | mock | dashscope | seed-asr
 ASR_MODE=local
+
+# WebSpeech
+WEBSPEECH_LANG=zh-CN
 
 # Seed-ASR
 SEED_ASR_APP_KEY=your_app_key
@@ -168,10 +177,13 @@ npm run tauri dev
 
 | 模式 | 说明 |
 | ------ | ------ |
-| local | 基于 SpeechRecognition + Google Speech API，按句回调，适合直接体验 |
+| local | 基于 SpeechRecognition + Google Speech API，按句回调，适合直接体验（需安装 PyAudio） |
+| webspeech | Edge/WebView2 Web Speech API，由前端采集后把文本注入后端 |
 | mock | 不录音、不识别，适合纯 UI 联调 |
-| dashscope | 阿里云百炼 Fun-ASR |
-| seed-asr | 字节 Seed-ASR，使用 utterances + definite 分句，避免流式累积文本反复写盘 |
+| dashscope | 阿里云百炼 Fun-ASR（需安装 PyAudio） |
+| seed-asr | 字节 Seed-ASR，使用 utterances + definite 分句，避免流式累积文本反复写盘（需安装 PyAudio） |
+
+说明：`webspeech` 与 `mock` 模式不依赖 PyAudio，可仅安装 `requirements.txt` 运行。
 
 ### 当前转录策略
 

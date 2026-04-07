@@ -1,0 +1,3 @@
+# 可选依赖：仅在需要麦克风采集的 ASR 模式时安装
+# 适用模式：local / dashscope / seed-asr
+pyaudio==0.2.14

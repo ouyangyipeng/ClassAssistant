@@ -10,6 +10,7 @@ import json
 import logging
 import os
 import re
+import secrets
 import threading
 from datetime import datetime
 from typing import List, Set
@@ -17,7 +18,13 @@ from typing import List, Set
 from fastapi import WebSocket
 
 from config import DATA_DIR
-from services.asr_service import create_asr, BaseASR, LocalASR
+from services.asr_service import (
+    BrowserSpeechASR,
+    BaseASR,
+    LocalASR,
+    create_asr,
+    get_effective_asr_mode as resolve_effective_asr_mode,
+)
 from services.llm_service import LLMService
 from services.transcript_service import TranscriptService
 
@@ -44,6 +51,7 @@ class MonitorService:
 
         # ASR 实例
         self._asr: BaseASR | None = None
+        self._ingest_token: str = ""
 
         # 用于从 ASR 回调线程安全地广播到 WebSocket 的事件循环
         self._loop: asyncio.AbstractEventLoop | None = None
@@ -238,6 +246,118 @@ class MonitorService:
             self._asr.on_text = self._on_local_asr_text
         self._asr.start()
 
+        # 防御性校验：ASR 启动后必须处于 running 状态，否则视为启动失败。
+        if self._asr is None or not self._asr.is_running:
+            raise RuntimeError("ASR initialization did not produce a running ASR instance")
+
+    def _build_asr_init_error(self, exc: Exception, action: str) -> dict:
+        """将 ASR 启动/恢复失败映射为更可操作的错误码和提示，便于前端引导用户修复。"""
+        raw = str(exc or "").strip()
+        lowered = raw.lower()
+
+        if "pyaudio" in lowered or "需要 pyaudio" in lowered:
+            return {
+                "status": "error",
+                "error_code": "missing_pyaudio",
+                "message": f"{action}失败：当前 ASR 模式需要麦克风依赖，请安装 requirements-mic.txt 后重试",
+            }
+
+        permission_hints = (
+            "not-allowed",
+            "service-not-allowed",
+            "audio-capture",
+            "permission",
+            "denied",
+            "access is denied",
+            "权限",
+        )
+        if any(token in lowered for token in permission_hints):
+            return {
+                "status": "error",
+                "error_code": "audio_permission_denied",
+                "message": f"{action}失败：无法访问麦克风，请检查系统麦克风权限或设备占用后重试",
+            }
+
+        config_hints = (
+            "api_key",
+            "app_key",
+            "access_key",
+            "resource_id",
+            "missing",
+            "invalid",
+            "未配置",
+            "配置",
+        )
+        if any(token in lowered for token in config_hints):
+            return {
+                "status": "error",
+                "error_code": "asr_config_error",
+                "message": f"{action}失败：ASR 配置无效或缺失，请检查 .env 中的 ASR 相关参数",
+            }
+
+        network_hints = (
+            "timeout",
+            "timed out",
+            "network",
+            "connection",
+            "websocket",
+            "连接",
+            "超时",
+        )
+        if any(token in lowered for token in network_hints):
+            return {
+                "status": "error",
+                "error_code": "asr_network_error",
+                "message": f"{action}失败：ASR 服务连接异常，请检查网络与服务状态后重试",
+            }
+
+        return {
+            "status": "error",
+            "error_code": "asr_init_failed",
+            "message": f"监控{action}失败，请稍后重试",
+        }
+
+    def get_effective_asr_mode(self) -> str:
+        return resolve_effective_asr_mode(self._asr)
+
+    def get_ingest_token(self) -> str:
+        return self._ingest_token
+
+    def ingest_external_text(self, text: str, is_final: bool = True, asr_session_token: str = "") -> dict:
+        """接收前端浏览器识别文本，并沿用现有 ASR 回调流程。"""
+        if not self.is_monitoring:
+            return {"status": "not_running", "message": "监控服务未在运行"}
+
+        if self.is_paused:
+            return {"status": "paused", "message": "监控服务已暂停，无法接收外部文本"}
+
+        if not self._ingest_token or asr_session_token != self._ingest_token:
+            return {"status": "unauthorized", "message": "会话令牌无效或已过期"}
+
+        # 增加防御性检查：确保当前 ASR 实例确实是 BrowserSpeechASR，避免在其他模式下产生重复转录
+        if not isinstance(self._asr, BrowserSpeechASR):
+            if self._asr is None:
+                return {"status": "error", "message": "当前 ASR 实例不可用，无法接收外部文本"}
+            return {"status": "unsupported_asr_mode", "message": "当前 ASR 模式不支持外部文本注入"}
+
+        # 统一裁剪并校验文本，避免空文本在后续被忽略却返回 success
+        clean_text = (text or "").strip()
+        if not clean_text:
+            return {
+                "status": "empty_text",
+                "message": "空文本已忽略，不会写入转录",
+            }
+
+        # 为避免在外部注入场景下高频 interim 文本触发大量 INFO 级别日志，
+        # 这里对非 final 的文本不再进入 _on_asr_text（仅最终结果参与转录和告警逻辑）。
+        if not is_final:
+            return {
+                "status": "success",
+                "message": "浏览器语音临时文本已接收（未写入转录以减少日志噪声）",
+            }
+        self._on_asr_text(clean_text, is_final)
+        return {"status": "success", "message": "浏览器语音文本已接收"}
+
     async def start(self, course_name: str = "", material_name: str = "") -> dict:
         """启动监控服务"""
         if self.is_monitoring:
@@ -245,20 +365,35 @@ class MonitorService:
 
         self.is_monitoring = True
         self.is_paused = False
+        self._ingest_token = secrets.token_urlsafe(24)
 
-        # 保存当前事件循环引用，供 ASR 回调使用
-        self._loop = asyncio.get_running_loop()
+        try:
+            # 保存当前事件循环引用，供 ASR 回调使用
+            self._loop = asyncio.get_running_loop()
 
-        # 重新加载关键词文件
-        self._load_keywords()
-        self._course_name = course_name.strip()
-        self._active_material_name = material_name.strip()
-        self._reset_session_state()
-        self._flush_transcript_file()
+            # 重新加载关键词文件
+            self._load_keywords()
+            self._course_name = course_name.strip()
+            self._active_material_name = material_name.strip()
+            self._reset_session_state()
+            self._flush_transcript_file()
 
-        # 创建 ASR 实例并启动
-        # 本地 ASR 使用独立的回调（每句新建一行），线上 ASR 使用流式回调
-        self._create_and_start_asr()
+            # 创建 ASR 实例并启动
+            # 本地 ASR 使用独立的回调（每句新建一行），线上 ASR 使用流式回调
+            self._create_and_start_asr()
+        except Exception as exc:
+            logger.exception("[MonitorService] start failed")
+            self.is_monitoring = False
+            self.is_paused = False
+            self._ingest_token = ""
+            if self._asr:
+                try:
+                    self._asr.stop()
+                except Exception:
+                    pass
+                self._asr = None
+            self._loop = None
+            return self._build_asr_init_error(exc, "启动")
 
         return {"status": "started", "message": "开始摸鱼模式 🎣 录音和监控已启动"}
 
@@ -275,6 +410,7 @@ class MonitorService:
         if self._asr:
             self._asr.stop()
             self._asr = None
+        self._ingest_token = ""
 
         with self._state_lock:
             if self._partial_line and self._partial_line[1].strip():
@@ -295,8 +431,24 @@ class MonitorService:
             return {"status": "not_paused", "message": "监控当前未暂停"}
 
         self.is_paused = False
+        self._ingest_token = secrets.token_urlsafe(24)
         self._loop = asyncio.get_running_loop()
-        self._create_and_start_asr()
+        try:
+            self._create_and_start_asr()
+        except Exception as exc:
+            # 回滚状态，避免服务处于不一致状态
+            logger.exception("Failed to resume monitoring due to ASR initialization error")
+            self.is_paused = True
+            if self._asr:
+                try:
+                    self._asr.stop()
+                except Exception:
+                    logger.exception("Error while stopping ASR after resume failure")
+                self._asr = None
+            self._ingest_token = ""
+            # 将 _loop 清空，避免残留无效引用
+            self._loop = None
+            return self._build_asr_init_error(exc, "恢复")
         return {"status": "resumed", "message": "监控已继续"}
 
     async def stop(self) -> dict:
@@ -306,6 +458,7 @@ class MonitorService:
 
         self.is_monitoring = False
         self.is_paused = False
+        self._ingest_token = ""
 
         # 停止 ASR
         if self._asr:

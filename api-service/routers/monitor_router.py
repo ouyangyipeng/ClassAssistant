@@ -4,7 +4,10 @@
 处理录音启停、关键词监控、WebSocket 推送
 """
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+import asyncio
+import os
+
+from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 from typing import List, Optional
 from services.monitor_service import MonitorService
@@ -29,6 +32,12 @@ class StartMonitorRequest(BaseModel):
     cite_filename: Optional[str] = None
 
 
+class IngestAsrTextRequest(BaseModel):
+    text: str
+    asr_session_token: str
+    is_final: bool = True
+
+
 @router.post("/start_monitor")
 async def start_monitor(request: StartMonitorRequest):
     """
@@ -38,11 +47,20 @@ async def start_monitor(request: StartMonitorRequest):
     - 启动关键词监控
     """
     material_name = request.cite_filename or ""
-    transcript_service.activate_cite_file(material_name or None)
+    try:
+        transcript_service.activate_cite_file(material_name or None)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=400, detail="未找到资料文件，请重新选择") from exc
     result = await monitor_service.start(
         course_name=request.course_name,
         material_name=material_name,
     )
+    if result.get("status") == "started":
+        mode = monitor_service.get_effective_asr_mode()
+        result["effective_asr_mode"] = mode
+        if mode == "webspeech":
+            result["webspeech_lang"] = os.getenv("WEBSPEECH_LANG", "zh-CN").strip() or "zh-CN"
+            result["asr_session_token"] = monitor_service.get_ingest_token()
     return result
 
 
@@ -55,7 +73,7 @@ async def get_cite_files():
 
 
 @router.post("/stop_monitor")
-async def stop_monitor():
+async def stop_monitor(with_summary: bool = True):
     """
     停止监控
     - 停止录音
@@ -63,6 +81,9 @@ async def stop_monitor():
     """
     result = await monitor_service.stop()
     if result.get("status") != "stopped":
+        return result
+
+    if not with_summary:
         return result
 
     try:
@@ -88,7 +109,37 @@ async def pause_monitor():
 
 @router.post("/resume_monitor")
 async def resume_monitor():
-    return await monitor_service.resume()
+    result = await monitor_service.resume()
+    if result.get("status") == "resumed":
+        mode = monitor_service.get_effective_asr_mode()
+        result["effective_asr_mode"] = mode
+        if mode == "webspeech":
+            result["webspeech_lang"] = os.getenv("WEBSPEECH_LANG", "zh-CN").strip() or "zh-CN"
+            result["asr_session_token"] = monitor_service.get_ingest_token()
+    return result
+
+
+@router.post("/ingest_asr_text")
+async def ingest_asr_text(request: IngestAsrTextRequest):
+    """接收浏览器 Web Speech 识别结果并写入课堂转录。"""
+    result = await asyncio.to_thread(
+        monitor_service.ingest_external_text,
+        request.text,
+        request.is_final,
+        request.asr_session_token,
+    )
+
+    status = result.get("status")
+    if status == "success":
+        return result
+    if status == "unauthorized":
+        raise HTTPException(status_code=401, detail=result.get("message") or "会话令牌无效或已过期")
+    if status in {"not_running", "paused", "unsupported_asr_mode"}:
+        raise HTTPException(status_code=409, detail=result.get("message") or "当前状态不允许注入文本")
+    if status == "empty_text":
+        raise HTTPException(status_code=400, detail=result.get("message") or "空文本已忽略")
+
+    raise HTTPException(status_code=500, detail=result.get("message") or "浏览器语音文本注入失败")
 
 
 @router.get("/monitor_status")
@@ -159,6 +210,12 @@ async def check_mic():
             "sample_rate": sample_rate,
             "channels": channels,
             "message": f"麦克风可用: {device_name}"
+        }
+    except (ImportError, OSError):
+        return {
+            "status": "error",
+            "error_code": "missing_mic_dependency",
+            "message": "未安装或无法加载麦克风依赖。请先安装 requirements-mic.txt（例如：pip install -r requirements-mic.txt），并确认底层音频库已正确安装。",
         }
     except Exception as e:
         return {

@@ -1,8 +1,9 @@
 """
 ASR 语音识别服务
 ================
-支持四种模式：
+支持五种模式：
   - local:     免费语音识别（Google Speech API，无需密钥，需联网）
+  - webspeech: 浏览器 Web Speech 识别前端采集，后端只接收文本
   - mock:      空实现，用于开发测试
   - dashscope: 阿里云百炼 Fun-ASR 实时语音识别
   - seed-asr:  字节跳动 Seed-ASR 大模型语音识别
@@ -16,10 +17,14 @@ import struct
 import threading
 import uuid
 from json import JSONDecodeError
-from typing import Callable, Optional
+from typing import Any, Callable, Optional
 
-import pyaudio
 from dotenv import load_dotenv
+
+try:
+    import pyaudio
+except Exception:  # pragma: no cover - optional dependency in browser-only mode; handle ImportError/OSError/etc.
+    pyaudio = None
 
 load_dotenv()
 
@@ -29,6 +34,34 @@ logger = logging.getLogger(__name__)
 SAMPLE_RATE = int(os.getenv("AUDIO_SAMPLE_RATE", "16000"))
 CHANNELS = int(os.getenv("AUDIO_CHANNELS", "1"))
 CHUNK_SIZE = int(os.getenv("AUDIO_CHUNK_SIZE", "3200"))  # 100ms @16kHz, 16bit, mono
+
+
+def normalize_asr_mode(value: str | None) -> str:
+    if value is None:
+        return "local"
+    return value.strip().lower() or "local"
+
+
+def get_effective_asr_mode(asr: "BaseASR | None") -> str:
+    if isinstance(asr, BrowserSpeechASR):
+        return "webspeech"
+    if isinstance(asr, LocalASR):
+        return "local"
+    if isinstance(asr, DashScopeASR):
+        return "dashscope"
+    if isinstance(asr, SeedASR):
+        return "seed-asr"
+    if isinstance(asr, MockASR):
+        return "mock"
+    return "mock"
+
+
+def _require_pyaudio(mode_name: str):
+    if pyaudio is None:
+        raise RuntimeError(
+            f"{mode_name} 需要 PyAudio，但当前环境未安装麦克风相关依赖。"
+            "请先安装 requirements-mic.txt，例如执行：pip install -r requirements-mic.txt"
+        )
 
 
 class BaseASR:
@@ -52,6 +85,11 @@ class BaseASR:
         """停止 ASR 识别"""
         raise NotImplementedError
 
+    @property
+    def is_running(self) -> bool:
+        """公开运行状态，避免外部直接耦合内部字段实现。"""
+        return self._running
+
 
 class MockASR(BaseASR):
     """Mock ASR - 不进行真实录音/识别，仅用于测试"""
@@ -63,6 +101,18 @@ class MockASR(BaseASR):
     def stop(self):
         self._running = False
         logger.info("[MockASR] stopped")
+
+
+class BrowserSpeechASR(BaseASR):
+    """WebSpeech 模式占位实现 - 不占用麦克风，由前端注入识别结果。"""
+
+    def start(self):
+        self._running = True
+        logger.info("[BrowserSpeechASR] started (frontend text injection mode)")
+
+    def stop(self):
+        self._running = False
+        logger.info("[BrowserSpeechASR] stopped")
 
 
 # =====================================================================
@@ -82,6 +132,7 @@ class LocalASR(BaseASR):
         self._stop_event = threading.Event()
 
     def start(self):
+        _require_pyaudio("LocalASR")
         self._running = True
         self._stop_event.clear()
         self._thread = threading.Thread(target=self._run, daemon=True)
@@ -166,19 +217,19 @@ class DashScopeASR(BaseASR):
     def __init__(self, on_text: Callable[[str, bool], None]):
         super().__init__(on_text)
         self._recognition = None
-        self._mic: Optional[pyaudio.PyAudio] = None
+        self._mic: Optional[Any] = None
         self._stream = None
         self._send_thread: Optional[threading.Thread] = None
         self._stop_event = threading.Event()
 
     def start(self):
+        _require_pyaudio("DashScopeASR")
         import dashscope
         from dashscope.audio.asr import Recognition, RecognitionCallback, RecognitionResult
 
         api_key = os.getenv("DASHSCOPE_API_KEY", "")
         if not api_key:
-            logger.error("[DashScopeASR] DASHSCOPE_API_KEY not set")
-            return
+            raise RuntimeError("DashScopeASR requires DASHSCOPE_API_KEY in .env")
 
         dashscope.api_key = api_key
         dashscope.base_websocket_api_url = "wss://dashscope.aliyuncs.com/api-ws/v1/inference"
@@ -288,7 +339,7 @@ class SeedASR(BaseASR):
     def __init__(self, on_text: Callable[[str, bool], None]):
         super().__init__(on_text)
         self._ws = None
-        self._mic: Optional[pyaudio.PyAudio] = None
+        self._mic: Optional[Any] = None
         self._stream = None
         self._thread: Optional[threading.Thread] = None
         self._stop_event = threading.Event()
@@ -382,6 +433,11 @@ class SeedASR(BaseASR):
             return None
 
     def start(self):
+        _require_pyaudio("SeedASR")
+        app_key = os.getenv("SEED_ASR_APP_KEY", "")
+        access_key = os.getenv("SEED_ASR_ACCESS_KEY", "")
+        if not app_key or not access_key:
+            raise RuntimeError("SeedASR requires SEED_ASR_APP_KEY and SEED_ASR_ACCESS_KEY in .env")
         self._running = True
         self._stop_event.clear()
         self._seen_utterances.clear()
@@ -585,9 +641,11 @@ def create_asr(on_text: Callable[[str, bool], None]) -> BaseASR:
     Returns:
         BaseASR 子类实例
     """
-    mode = os.getenv("ASR_MODE", "local").lower()
+    mode = normalize_asr_mode(os.getenv("ASR_MODE"))
     if mode == "local":
         return LocalASR(on_text)
+    elif mode in {"webspeech", "browser", "edge-webspeech"}:
+        return BrowserSpeechASR(on_text)
     elif mode == "dashscope":
         return DashScopeASR(on_text)
     elif mode == "seed-asr":

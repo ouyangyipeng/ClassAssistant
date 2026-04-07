@@ -5,7 +5,7 @@
  */
 
 // 后端地址（开发环境）
-const API_BASE = "http://127.0.0.1:8765/api";
+export const API_BASE = "http://127.0.0.1:8765/api";
 
 /**
  * 上传 PPT 文件到后端进行解析
@@ -46,26 +46,84 @@ export interface StopMonitorResponse {
   summary_error?: string;
 }
 
+export interface StartMonitorResponse {
+  status: string;
+  message: string;
+  effective_asr_mode?: string;
+  webspeech_lang?: string;
+  asr_session_token?: string;
+}
+
+async function extractErrorMessage(
+  res: Response,
+  fallback: string
+): Promise<string> {
+  const formatDetail = (detail: unknown): string | null => {
+    if (typeof detail === "string") {
+      return detail.trim() ? detail : null;
+    }
+    if (Array.isArray(detail)) {
+      return detail
+        .map((item) => (typeof item === "string" ? item : JSON.stringify(item)))
+        .join("; ");
+    }
+    if (detail != null) {
+      return JSON.stringify(detail);
+    }
+    return null;
+  };
+
+  try {
+    const raw = await res.text();
+    if (!raw) {
+      return fallback;
+    }
+
+    try {
+      const err = JSON.parse(raw);
+      const detailMessage = formatDetail(err?.detail);
+      if (detailMessage) {
+        return detailMessage;
+      }
+      if (typeof err?.message === "string" && err.message.trim()) {
+        return err.message;
+      }
+      return raw;
+    } catch {
+      return raw;
+    }
+  } catch {
+    return fallback;
+  }
+}
+
 /**
  * 启动摸鱼监控模式
  */
 export async function startMonitor(
   payload: StartMonitorPayload
-): Promise<{ status: string; message: string }> {
+): Promise<StartMonitorResponse> {
   const res = await fetch(`${API_BASE}/start_monitor`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error("启动监控失败");
-  return res.json();
+  if (!res.ok) {
+    throw new Error(await extractErrorMessage(res, "启动监控失败"));
+  }
+  const data = await res.json();
+  if (data.status && data.status !== "started") {
+    throw new Error(data.message || "启动监控失败");
+  }
+  return data;
 }
 
 /**
  * 停止监控
  */
-export async function stopMonitor(): Promise<{ status: string; message: string }> {
-  const res = await fetch(`${API_BASE}/stop_monitor`, { method: "POST" });
+export async function stopMonitor(options: { withSummary?: boolean } = {}): Promise<StopMonitorResponse> {
+  const query = options.withSummary === false ? "?with_summary=false" : "";
+  const res = await fetch(`${API_BASE}/stop_monitor${query}`, { method: "POST" });
   if (!res.ok) throw new Error("停止监控失败");
   return res.json();
 }
@@ -76,16 +134,49 @@ export async function pauseMonitor(): Promise<{ status: string; message: string 
   return res.json();
 }
 
-export async function resumeMonitor(): Promise<{ status: string; message: string }> {
+export async function resumeMonitor(): Promise<{
+  status: string;
+  message: string;
+  asr_session_token?: string;
+  effective_asr_mode?: string;
+  webspeech_lang?: string;
+}> {
   const res = await fetch(`${API_BASE}/resume_monitor`, { method: "POST" });
-  if (!res.ok) throw new Error("继续监控失败");
-  return res.json();
+  if (!res.ok) {
+    throw new Error(await extractErrorMessage(res, "继续监控失败"));
+  }
+  const data = await res.json();
+  if (data.status && data.status !== "resumed") {
+    throw new Error(data.message || "继续监控失败");
+  }
+  return data;
 }
 
 export async function stopMonitorWithSummary(): Promise<StopMonitorResponse> {
-  const res = await fetch(`${API_BASE}/stop_monitor`, { method: "POST" });
-  if (!res.ok) throw new Error("停止监控失败");
-  return res.json();
+  return stopMonitor({ withSummary: true });
+}
+
+export async function ingestAsrText(payload: {
+  text: string;
+  is_final: boolean;
+  asr_session_token: string;
+}): Promise<{ status: string; message: string }> {
+  const res = await fetch(`${API_BASE}/ingest_asr_text`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    throw new Error(await extractErrorMessage(res, "浏览器语音文本注入失败"));
+  }
+
+  const data = await res.json();
+  if (data.status && data.status !== "success") {
+    throw new Error(data.message || "浏览器语音文本注入失败");
+  }
+
+  return data;
 }
 
 /**
