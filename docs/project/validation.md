@@ -1,14 +1,14 @@
 # 验证范围
 
-记录日期：2026-09-23。对应 v2.0 发布候选，最终平台构建结果可查 [PR #13](https://github.com/ouyangyipeng/ClassAssistant/pull/13)。完整持续记录在仓库 `plan/progress.md`；下面明确区分可复用证据和待验收项目。
+记录日期：2026-09-23。v2.0 应用代码 `85b1bff` 的[三平台 CI 全部通过](https://github.com/ouyangyipeng/ClassAssistant/actions/runs/35791742606)，发布审查见 [PR #13](https://github.com/ouyangyipeng/ClassAssistant/pull/13)。完整持续记录在仓库 `plan/progress.md`；下面明确区分可复用证据和待验收项目。
 
 | 层级 | 已有证据 | 尚未覆盖 |
 | --- | --- | --- |
-| Python 后端 | 181 项完整回归已在 Windows x64、macOS arm64 和 Intel CI 通过 | 真实在线账户与设备差异 |
+| Python 后端 | 两种 macOS 架构均 181 项通过；Windows 180 项通过、1 项 POSIX 专用测试跳过 | 真实在线账户与设备差异 |
 | 桌面前端 | 22 项单元、源码/测试类型检查与生产构建通过；6 个 Chrome 场景全量通过 | 真实环境麦克风；安装版文本保存、崩溃重连原文保留、退出已验证 |
 | 本地模型 | M4 Pro / 48 GiB 上固定公开语音和 3 个合成课堂问题 | 课堂噪声、多种设备与通用准确率 |
 | macOS arm64 包 | 最终包 DMG/签名完整性、6 项冻结入口测试、真实离线 ASR/VAD/LLM、监督进程回收通过 | Developer ID、公证、用户机器上的实际下载安装 |
-| Windows x64 / macOS Intel | 原生 CI 分别检查源码、Rust、安装包及冻结入口；仅发布全部通过的平台资产，最终结果见 PR 和 Release | 真实用户机器上的安装与麦克风验收未覆盖 |
+| Windows x64 / macOS Intel | 原生 CI 的源码、Rust、安装包及 6 项冻结入口测试全部通过；Intel cryptography 使用静态 OpenSSL | 真实用户机器上的安装与麦克风验收未覆盖 |
 | 微信 | 36 项单元、类型检查、构建、构建产物 VM 行为和真实 Python/Node 回环互通通过 | WXML 原生渲染、开发者工具、真机、在线账户与上架 |
 | 在线 ASR / LLM | 合成 SSE 和 WebSocket 成功、失败、取消与协议测试 | 真实付费账户、网络质量和识别质量 |
 
