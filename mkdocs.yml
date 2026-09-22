@@ -1,0 +1,61 @@
+site_name: 课狐 ClassFox
+site_description: 课堂原文、本地模型与微信基础版的使用和开发文档。
+site_url: http://oyyp.nexa-lang.com/ClassAssistant/
+repo_url: https://github.com/ouyangyipeng/ClassAssistant
+repo_name: ouyangyipeng/ClassAssistant
+theme:
+  language: zh
+  variant: modern
+  logo: img/logo透明背景.png
+  favicon: img/logo.png
+  font: false
+  palette:
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: deep orange
+      accent: orange
+      toggle:
+        icon: material/weather-night
+        name: 切换到深色
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: deep orange
+      accent: orange
+      toggle:
+        icon: material/weather-sunny
+        name: 切换到浅色
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.highlight
+    - content.code.copy
+markdown_extensions:
+  - tables
+  - admonition
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+nav:
+  - 首页: index.md
+  - 使用:
+      - 首次使用: user-guide/quickstart.md
+      - 课堂工作流: user-guide/features.md
+      - 升级与迁移: user-guide/migration.md
+      - 微信小程序: user-guide/wechat.md
+      - 常见问题: user-guide/faq.md
+  - 开发:
+      - 环境准备: getting-started/environment.md
+      - 开发与验证: getting-started/development.md
+      - 打包与发布: getting-started/packaging.md
+      - 系统架构: project/architecture.md
+      - 数据与配置: project/data-and-config.md
+      - 接口与迁移: developer/api-reference.md
+      - 故障排查: developer/troubleshooting.md
+  - 项目:
+      - 验证范围: project/validation.md
+      - Issues 与分支: project/maintenance.md
+      - 许可与贡献: project/introduction.md
+extra:
+  generator: false
+copyright: Copyright © 2026 ClassFox contributors

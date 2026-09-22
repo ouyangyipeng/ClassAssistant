@@ -1,0 +1,8 @@
+{
+  "bundle": {
+    "resources": {
+      "../../api-service/dist/classfox-service/": "backend/",
+      "../../release/legal/": "legal/"
+    }
+  }
+}

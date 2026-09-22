@@ -1,0 +1,130 @@
+name: Verify ClassFox
+
+on:
+  pull_request:
+  push:
+    branches: [main, 'feat/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PYTHONUTF8: '1'
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web-and-phone:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: '0.11.30'
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+      - run: npm install --global pnpm@12.4.2
+      - run: uv sync --project api-service --locked
+      - run: pnpm --dir app-ui install --frozen-lockfile
+      - run: pnpm --dir app-ui typecheck
+      - run: pnpm --dir app-ui test
+      - run: pnpm --dir app-ui build
+      - run: pnpm --dir app-ui exec playwright install --with-deps chromium
+      - run: pnpm --dir app-ui test:e2e
+      - run: pnpm --dir mini-program install --frozen-lockfile
+      - run: pnpm --dir mini-program typecheck
+      - run: pnpm --dir mini-program test
+      - run: pnpm --dir mini-program build
+      - run: pnpm --dir mini-program test:bundle
+      - run: pnpm --dir mini-program test:interop
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: failure()
+        with:
+          name: browser-test-evidence
+          path: app-ui/test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  desktop:
+    name: Desktop ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            platform: macos-arm64
+            bundles: app,dmg
+          - runner: macos-15-intel
+            platform: macos-x64
+            bundles: app,dmg
+          - runner: windows-2022
+            platform: windows-x64
+            bundles: nsis
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 50
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: '0.11.30'
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+      - run: npm install --global pnpm@12.4.2
+      - run: rustup component add rustfmt clippy
+      - run: uv sync --project api-service --locked --extra audio --extra bundle
+      - name: Python quality and behavior
+        working-directory: api-service
+        run: |
+          uv run --no-sync isort --settings-path pyproject.toml --check-only classfox tests main.py ../scripts
+          uv run --no-sync ruff check --config pyproject.toml classfox tests main.py ../scripts/*.py
+          uv run --no-sync ruff format --config pyproject.toml --check classfox tests main.py ../scripts/*.py
+          uv run --no-sync ty check
+          uv run --no-sync pytest -q
+      - run: uv run --project api-service --no-sync ty check --project . scripts
+      - run: uv run --project api-service --no-sync python -m unittest discover -s scripts -p 'test_*.py'
+      - run: pnpm --dir app-ui install --frozen-lockfile
+      - run: pnpm --dir app-ui build
+      - name: Rust quality and owned-process tests
+        working-directory: app-ui/src-tauri
+        run: |
+          cargo fmt --all -- --check
+          cargo clippy --locked --all-targets -- -D warnings
+          cargo test --locked
+      - name: Build native application
+        run: uv run --no-project --python 3.12 scripts/build.py --bundles '${{ matrix.bundles }}'
+      - name: Test frozen backend
+        working-directory: api-service
+        run: |
+          if [[ "$RUNNER_OS" == 'Windows' ]]; then
+            export CLASSFOX_TEST_BACKEND="$GITHUB_WORKSPACE/api-service/dist/classfox-service/classfox-service.exe"
+          else
+            export CLASSFOX_TEST_BACKEND="$GITHUB_WORKSPACE/api-service/dist/classfox-service/classfox-service"
+          fi
+          uv run --no-sync pytest -q tests/test_launcher.py
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ClassFox-2.0.0-${{ matrix.platform }}-unsigned
+          path: |
+            app-ui/src-tauri/target/release/bundle/dmg/*.dmg
+            app-ui/src-tauri/target/release/bundle/nsis/*.exe
+          if-no-files-found: error
+          retention-days: 14

@@ -1,0 +1,43 @@
+<privacy-consent />
+<view class="page">
+  <view class="hero">
+    <view class="eyebrow">CLASSFOX / 课堂随行</view>
+    <view class="row"><view class="heading">{{hasClass ? courseName : '把注意力，留在课堂。'}}</view><text wx:if="hasClass" class="badge">{{status}}</text></view>
+    <view class="subtitle">{{mode === 'desktop' ? '连接电脑 · 使用本地模型' : '手机独立使用 · 自带 API Key'}}</view>
+  </view>
+  <view wx:if="error" class="error"><text selectable>{{error}}</text><button class="quiet" bindtap="dismiss">知道了</button></view>
+  <view wx:if="keyword" class="notice">刚才提到了「{{keyword}}」，留意课堂重点。</view>
+  <view wx:if="unsaved" class="error"><view>以下原文尚未保存，请先复制保留</view><text selectable class="selectable">{{unsaved}}</text><view class="actions"><button bindtap="retry">重试保存</button><button data-target="unsaved" bindtap="copy">复制原文</button></view></view>
+  <view wx:if="!canRecord" class="section">
+    <label>下一堂课</label><input value="{{title}}" bindinput="onTitle" maxlength="120" placeholder="例如：数据结构 · 第四讲" />
+    <view class="actions"><button class="primary" bindtap="create" disabled="{{busy || generating}}">开始一堂课</button><button bindtap="settings">连接与设置</button></view>
+    <view class="hint">录音由你手动开始。请确认课堂参与者同意录音。</view>
+  </view>
+  <view wx:if="canRecord" class="recording">
+    <view class="row"><view class="section-title">{{capture === 'recording' ? '正在聆听' : capture === 'starting' ? '正在连接麦克风…' : capture === 'stopping' ? '正在保存最后一句…' : '准备好就开始'}}</view><text class="small muted">{{total}} 条原文</text></view>
+    <view class="actions"><button class="primary" bindtap="record" disabled="{{capture === 'stopping' || busy}}">{{capture === 'recording' ? '暂停录音' : capture === 'starting' ? '取消启动' : capture === 'stopping' ? '正在停止' : '开始 / 继续录音'}}</button><button bindtap="finish" disabled="{{busy || capture === 'stopping'}}">结束课堂</button></view>
+    <view class="hint">离开此页会暂停录音。每段最长 10 分钟，可手动继续。</view>
+    <textarea class="text-input" value="{{draft}}" bindinput="onDraft" maxlength="8000" placeholder="也可以粘贴讲义片段，或手动记录一句话…" />
+    <button class="quiet" bindtap="append" disabled="{{!draft || busy}}">保存文字</button>
+  </view>
+  <view wx:if="hasClass" class="section">
+    <view class="row"><view class="section-title">课堂原文</view><text class="muted small">已保存在本机</text></view>
+    <button wx:if="more" class="quiet" bindtap="more">查看更早的原文（共 {{total}} 条）</button>
+    <button wx:if="hasNewer" class="quiet" bindtap="newest">回到最新原文</button>
+    <view wx:if="!total" class="empty">第一句，等你开始。<view class="small">录音或输入的文字会出现在这里。</view></view>
+    <view wx:for="{{entries}}" wx:key="id" class="entry"><text class="time">{{item.time}}</text><text selectable class="selectable">{{item.text}}</text></view>
+    <view wx:if="interim" class="entry interim"><text class="time">识别中</text><text>{{interim}}</text></view>
+  </view>
+  <view wx:if="hasClass" class="section assistant">
+    <view class="eyebrow">多一点理解</view><view class="section-title">课狐帮你接上思路</view>
+    <view class="actions"><button data-kind="rescue" bindtap="ask" disabled="{{generating || !total}}">帮我回答</button><button data-kind="catchup" bindtap="ask" disabled="{{generating || !total}}">刚才讲了什么</button></view>
+    <button class="soft summary" data-kind="summary" bindtap="ask" disabled="{{generating || !total}}">整理课堂笔记</button>
+    <input value="{{question}}" bindinput="onQuestion" maxlength="4000" placeholder="还有哪里没听懂？" /><button class="quiet" data-kind="followup" bindtap="ask" disabled="{{generating || !question || !total}}">结合原文追问</button>
+    <view wx:if="stage" class="row"><text class="muted small">{{stage}}</text><button wx:if="generating" class="quiet" bindtap="cancel">取消生成</button></view>
+    <text wx:if="answer" selectable class="selectable answer">{{answer}}</text>
+    <button wx:if="answer" class="quiet" data-target="answer" bindtap="copy">复制回答</button>
+    <view class="hint">回答可能有误，请结合老师讲解核对。整理长课堂会分段调用服务，按服务商计费。</view>
+  </view>
+  <view wx:if="notes.length" class="section"><view class="section-title">最近保存的笔记</view><text selectable class="selectable">{{notes[0].markdown}}</text></view>
+  <view wx:if="hasClass" class="actions section"><button bindtap="export">导出全部原文与笔记</button><button data-target="record" bindtap="copy">复制课堂</button></view>
+</view>

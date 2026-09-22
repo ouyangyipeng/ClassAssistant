@@ -1,0 +1,46 @@
+.overlay {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  background: #19221a88;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+}
+.dialog {
+  background: #f8f7f4;
+  color: #252824;
+  border-radius: 24rpx;
+  padding: 34rpx;
+  width: 100%;
+  max-width: 650rpx;
+  box-sizing: border-box;
+}
+.title {
+  font-size: 34rpx;
+  font-weight: 600;
+  margin-bottom: 22rpx;
+}
+.copy {
+  font-size: 26rpx;
+  line-height: 1.7;
+  margin-bottom: 18rpx;
+}
+button {
+  border-radius: 14rpx;
+  font-size: 27rpx;
+}
+button::after {
+  border: none;
+}
+.primary {
+  background: #aa5929;
+  color: white;
+}
+.link {
+  background: transparent;
+  color: #757970;
+  font-size: 24rpx;
+  margin: 12rpx 0;
+}

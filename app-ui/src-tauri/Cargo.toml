@@ -1,8 +1,8 @@
 [package]
 name = "app-ui"
-version = "1.2.1"
-description = "A Tauri App"
-authors = ["you"]
+version = "2.0.0"
+description = "ClassFox classroom transcription and assistance"
+authors = ["Ouyang Yipeng and ClassFox contributors"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -18,8 +18,10 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2", features = [] }
+tauri = { version = "2", features = ["macos-private-api"] }
 tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+tauri-plugin-dialog = "=2.7.3"
+tempfile = "3"
 

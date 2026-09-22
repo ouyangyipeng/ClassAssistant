@@ -1,0 +1,15 @@
+{
+  "description": "课狐微信小程序本地验证版。取得自己的 AppID 后通过开发者工具本地配置填写，不提交密钥。",
+  "miniprogramRoot": "dist/",
+  "compileType": "miniprogram",
+  "appid": "touristappid",
+  "projectname": "ClassFox",
+  "libVersion": "3.2.2",
+  "setting": {
+    "urlCheck": true,
+    "es6": true,
+    "minified": true,
+    "postcss": true
+  },
+  "packOptions": { "ignore": [{ "type": "file", "value": "version.json" }] }
+}

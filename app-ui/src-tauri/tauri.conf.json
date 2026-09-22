@@ -1,38 +1,36 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "课狐ClassFox",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "identifier": "com.classassistant.app",
   "build": {
-    "beforeDevCommand": "npm run dev",
-    "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "pnpm dev",
+    "devUrl": "http://127.0.0.1:1420",
+    "beforeBuildCommand": "pnpm build",
     "frontendDist": "../dist"
   },
   "app": {
-    "withGlobalTauri": true,
+    "withGlobalTauri": false,
     "windows": [
       {
         "label": "main",
-        "title": "课狐ClassFox",
-        "width": 320,
-        "height": 80,
-        "minWidth": 280,
-        "minHeight": 60,
-        "visible": false,
+        "title": "课狐 ClassFox",
+        "width": 1180,
+        "height": 780,
+        "minWidth": 860,
+        "minHeight": 620,
+        "visible": true,
         "resizable": true,
         "decorations": false,
         "transparent": true,
-        "alwaysOnTop": true,
-        "skipTaskbar": false,
-        "center": false,
-        "x": 100,
-        "y": 100
+        "alwaysOnTop": false,
+        "center": true
       }
     ],
     "security": {
-      "csp": null
-    }
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost http://127.0.0.1:* ws://127.0.0.1:*; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'none'"
+    },
+    "macOSPrivateApi": true
   },
   "bundle": {
     "active": true,
@@ -43,6 +41,11 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "macOS": {
+      "minimumSystemVersion": "12.0",
+      "infoPlist": "Info.plist",
+      "entitlements": "Entitlements.plist"
+    }
   }
 }

@@ -1,0 +1,45 @@
+.recording {
+  padding: 28rpx;
+  background: #efeee8;
+  border-radius: 20rpx;
+  margin-top: 28rpx;
+}
+.text-input {
+  margin-top: 28rpx;
+}
+.entry {
+  display: flex;
+  gap: 20rpx;
+  padding: 22rpx 0;
+  border-bottom: 1rpx solid var(--line);
+  font-size: 28rpx;
+}
+.entry .time {
+  min-width: 108rpx;
+  font-size: 22rpx;
+  color: var(--muted);
+  padding-top: 4rpx;
+}
+.entry .selectable {
+  flex: 1;
+  min-width: 0;
+}
+.interim {
+  color: var(--muted);
+  border-bottom-style: dashed;
+}
+.assistant {
+  border-top: 3rpx solid var(--accent);
+  padding-top: 26rpx;
+  margin-top: 44rpx;
+}
+.summary {
+  margin: 18rpx 0 30rpx;
+}
+.answer {
+  display: block;
+  background: var(--surface);
+  padding: 26rpx;
+  margin-top: 18rpx;
+  border-radius: 16rpx;
+}

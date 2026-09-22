@@ -1,277 +1,75 @@
-# 🦊 课狐 ClassFox - 你的上课摸鱼搭子 🐟
+# 课狐 ClassFox 2.0
 
-> 📚 项目文档：<https://ouyangyipeng.github.io/ClassAssistant/>
+<img src="docs/img/logo透明背景.png" alt="课狐 ClassFox" width="120" />
 
-<!-- markdownlint-disable MD033 -->
-<div align="center">
-  <img src="docs/img/logo透明背景.png" alt="课狐 ClassFox Logo" width="128" />
-  <br />
-  <a href="https://github.com/ouyangyipeng/ClassAssistant/stargazers">
-    <img src="https://img.shields.io/github/stars/ouyangyipeng/ClassAssistant?style=for-the-badge&logo=github" alt="GitHub stars" />
-  </a>
-  <a href="https://github.com/ouyangyipeng/ClassAssistant/issues">
-    <img src="https://img.shields.io/github/issues/ouyangyipeng/ClassAssistant?style=for-the-badge&logo=github" alt="GitHub issues" />
-  </a>
-</div>
-<!-- markdownlint-enable MD033 -->
+课狐把课堂转录、关键词提醒、即时问答和课后笔记放在一个桌面工作区里。每堂课独立保存原文；可以下载本地语音与问答模型，也可以使用自己的服务商 API Key（BYOK）。微信小程序计划在 v2.5 正式交付，已有开发预览代码。
 
-> ClassFox — Hears what you miss.
->
-> ClassFox 课狐 —— 听见你的错过，接住你的惊慌。
->
-> 以耳廓狐为灵感的小体量课堂悬浮助手：资源占用轻，专门盯住你最容易错过的点名、提问和进度变化。
+**当前为 2.0 开发与发布验证分支。** 安装包、在线账户实测、微信真机和商店上架分别验收，具体边界见 [验证记录](docs/project/validation.md)。微信预览没有公开 AppID，不属于 v2.0 正式验收范围。
 
-## 🚀 v1.2.0 近期优化
+[下载安装包](https://github.com/ouyangyipeng/ClassAssistant/releases) · [首次使用](docs/user-guide/quickstart.md) · [升级与数据迁移](docs/user-guide/migration.md) · [微信小程序](mini-program/README.md) · [更新记录](CHANGELOG.md)
 
-- **品牌升级**：项目产品名更新为“课狐 ClassFox”，强调“小体量 + 高听感”的课堂辅助定位。
-- **单入口发布**：release 根目录只保留一个 课狐ClassFox.exe，后端由主程序静默拉起，避免首次使用误点多个入口。
-- **启动体验升级**：新增居中启动遮罩与 logo 动画，启动阶段不再裸露命令行窗口。
-- **紧凑悬浮窗**：主窗口压缩到更低调的 320 宽紧凑尺寸，监控、警报和扩展面板按场景单独控制高度。
-- **追问链路补齐**：救场面板和“老师讲到哪了”都支持继续追问，返回区位置上移，避免在小窗里被截断。
-- **关键词判定更准**：告警改为只检测当前新增落盘的那一行，避免把历史多行误拼成一次红灯命中。
-- **Local 模式修正**：本地识别增加短时片段拼接与更保守的停顿判定，减少一句话只落前几个字的问题。
-- **试用配置内置**：打包时会直接把 api-service/.env.example 构建为 release/backend/.env，方便开箱即用。
+## 2.0 的主要变化
 
-## 🎬 Demo
+- **课堂原文保留**：SQLite 按课堂保存转录、资料和笔记。总结使用原文快照，成功后另存笔记；失败、取消和新开课堂不会覆盖旧原文。
+- **本地模型安装**：应用内下载 SenseVoiceSmall INT8、Qwen3.5 4B Q4_K_M 与固定版本 llama.cpp，检查文件摘要及加载结果，支持取消和重试。
+- **流式课堂助手**：救场、进度、追问和总结逐段显示，提供取消、首字耗时与总耗时；长课按段整理，明确报告超时和服务商错误。
+- **桌面工作区**：完整课堂视图与置顶紧凑窗、原文搜索、PPTX/PDF/DOCX/TXT/Markdown 资料、历史笔记、原生保存对话框、浅色/深色外观。
+- **跨平台进程管理**：Tauri 启动带身份验证的本机后端，只清理本实例持有的子进程。应用目录只读，用户数据放在系统用户目录。
+- **v2.5 微信开发预览（尚未正式交付）**：手机录音、原文、提醒、问答、笔记和导出；Key 默认仅驻留内存。连接电脑时使用一次性扫码、双端核对和加密消息，手机只能访问自己的课堂。
 
-### 摸鱼监控状态
+## 选择使用方式
 
-![摸鱼监控状态演示](docs/img/%E6%91%B8%E9%B1%BC%E7%8A%B6%E6%80%81.gif)
+| 方式 | 所需资源 | 课堂内容去向 |
+| --- | --- | --- |
+| 桌面本地模式 | 下载语音和问答模型；足够磁盘、内存 | 在电脑上处理，原文保存在本机 |
+| 桌面 BYOK | ASR 和 LLM 可分别配置自己的服务 | 相应音频或文字发送到选定服务商 |
+| 手机独立 BYOK（v2.5 预览） | 微信项目可运行；预设服务商 Key；网络 | 音频和文字分别发送到所选 ASR、LLM 服务商 |
+| 手机连接电脑（v2.5 预览） | 同一可互通局域网；电脑运行课狐并已安装本地模型 | 加密传给电脑处理；电脑和手机各保存手机课堂记录 |
 
-### 点名警报与 AI 救场
+本地问答权重约 2.74 GB，语音模型约 240 MB，安装还需要临时空间。运行内存与响应速度取决于设备和上下文。模型不随桌面安装包内置，首次安装需要联网。手机首版不在手机上运行离线大模型。
 
-![点名警报与 AI 救场演示](docs/img/%E7%82%B9%E5%90%8D%E8%AD%A6%E6%8A%A5%E4%B8%8Eai%E5%9B%9E%E7%AD%94.gif)
+## 首次使用
 
-### 老师讲到哪儿了
+1. 打开「设置 → 本地模型」完成模型安装，或在「问答服务」「语音与麦克风」配置 BYOK。
+2. 本地模式可先点「准备问答模型」，把首次加载安排在课前。BYOK 可用固定短文本测试连接。
+3. 检测麦克风，填写关键词。录音前确认已取得参与者的知情同意。
+4. 开始一堂课，选择麦克风、浏览器语音、文本输入或分段音频上传。系统听写可直接输入文本框。
+5. 需要时发起救场、进度或追问；结束后整理笔记并导出。
 
-![老师讲到哪儿了演示](docs/img/%E8%80%81%E5%B8%88%E8%AE%B2%E5%88%B0%E5%93%AA%E5%84%BF%E4%BA%86.gif)
+浏览器语音依赖 WebView 和网络，不等于离线识别。模型回答和识别结果可能有误，需要结合原始课堂内容核实。
 
-## ✨ 核心功能
+## 从源码运行
 
-| 功能 | 说明 |
-| ------ | ------ |
-| 🎙️ 实时语音监控 | Local ASR / WebSpeech / Seed-ASR / DashScope / Mock 多模式切换 |
-| 🧹 去重转录 | 流式识别结果按句落盘，过滤重复、碎片标点和相近修正文 |
-| 🧠 滚动课堂摘要 | 每累计 50 条课堂记录，自动压缩为一段历史摘要，减小上下文体积 |
-| 🚨 点名预警 | 命中关键词后通过 WebSocket 推送红色警报弹层 |
-| 🆘 一键救场 | 结合最近转录和课程资料，生成应答思路与参考答案 |
-| 📍 老师讲到哪了 | 对最近课堂内容做即时进度总结 |
-| 📝 课后总结 | 生成 Markdown 课堂笔记并落盘到 data/summaries |
-| 📄 资料上传与引用 | PPT / PDF / Word 解析后存入 data/cite，开始监控前可选择引用资料 |
-| ⚙️ 内置设置面板 | 前端可直接编辑后端 .env，无需手动找文件 |
-
-## 🏗️ 架构概览
-
-```text
-Tauri + React UI
-        │
-        ├─ HTTP API
-        └─ WebSocket Alert
-                │
-          FastAPI Backend
-                │
-      ┌─────────┼─────────┐
-      │         │         │
-    ASR       LLM     Transcript
-      │                   │
-  Local / Seed /      class_transcript.txt
-  DashScope / Mock    current_class_material.txt
-                      data/cite/*.txt
-```
-
-后端负责录音、ASR、关键词检测、滚动摘要和 LLM 调用；前端负责悬浮窗 UI、警报展示、资料上传、监控启动参数选择和设置编辑。
-
-## 🚀 快速开始
-
-### 1. 克隆仓库
+需要 Python 3.12、[uv](https://docs.astral.sh/uv/getting-started/installation/)、Node.js 22+、pnpm 12.4.2、Rust 和 [Tauri 平台构建依赖](https://v2.tauri.app/start/prerequisites/)。本次验证使用 Python 3.12.13 / Node.js 24。
 
 ```bash
 git clone https://github.com/ouyangyipeng/ClassAssistant.git
 cd ClassAssistant
+uv run --no-project --python 3.12 scripts/dev.py
 ```
 
-### 2. 配置后端 Python 环境
+Windows 也可运行根目录 `dev.bat`。启动脚本使用锁定依赖和独立后端，不会按名称或端口强杀其他程序，也不会创建或覆盖 `.env`。
 
 ```bash
-cd api-service
-python -m venv .venv
-.venv\Scripts\pip install -r requirements.txt
-.venv\Scripts\pip install pyinstaller
+# macOS 本机架构应用与 DMG；默认仅临时签名
+uv run --no-project --python 3.12 scripts/build.py --bundles app,dmg
+
+# Windows x64 安装程序（在 Windows 上运行）
+uv run --no-project --python 3.12 scripts/build.py --bundles nsis
 ```
 
-如果你要使用麦克风采集模式（`local` / `dashscope` / `seed-asr`），再额外安装：
+构建、签名、回归和发布门禁见 [开发指南](docs/getting-started/development.md) 与 [打包说明](docs/getting-started/packaging.md)。微信源码有独立的 [构建与配置说明](mini-program/README.md)。
 
-```bash
-.venv\Scripts\pip install -r requirements-mic.txt
-```
+## 数据和升级
 
-### 3. 配置前端依赖
+桌面正式版数据目录为 macOS 的 `~/Library/Application Support/ClassFox` 或 Windows 的 `%LOCALAPPDATA%\ClassFox`。调试版使用 `ClassFox Development`。数据库包含课堂文本，备份应在正常退出应用后复制整个数据目录。
 
-```bash
-cd app-ui
-npm install
-```
+旧版 `data/`、`.env` 与外观偏好可在设置中分别导入。旧文件保留，重复导入相同文本不重复创建记录。旧版本已经压缩或覆盖掉的原文无法恢复。2.0 不分发共享试用 Key，不继续开放旧的无鉴权 API；第三方调用方请阅读 [接口迁移说明](docs/developer/api-reference.md)。
 
-### 4. 配置环境变量
+## 贡献与许可
 
-在 api-service 下创建 .env，可参考 .env.example：
+欢迎提供可复现的问题、脱敏日志和改进建议，参见 [贡献指南](CONTRIBUTING.md)。macOS 分支和 WebSpeech 等历史贡献的处理记录见 [issues 与分支](docs/project/maintenance.md)。
 
-```env
-# ASR 模式: local | webspeech | mock | dashscope | seed-asr
-ASR_MODE=local
+项目代码使用 [MIT License](LICENSE)。语音模型、问答模型、运行时和第三方依赖各自遵循上游许可，见 [第三方说明](THIRD_PARTY_NOTICES.md)。
 
-# WebSpeech
-WEBSPEECH_LANG=zh-CN
-
-# Seed-ASR
-SEED_ASR_APP_KEY=your_app_key
-SEED_ASR_ACCESS_KEY=your_access_key
-SEED_ASR_RESOURCE_ID=volc.bigasr.sauc.duration
-
-# DashScope Fun-ASR
-DASHSCOPE_API_KEY=sk-your-dashscope-key
-
-# LLM
-LLM_BASE_URL=https://api.deepseek.com
-LLM_API_KEY=sk-your-key
-LLM_MODEL=deepseek-chat
-
-# Audio
-AUDIO_SAMPLE_RATE=16000
-AUDIO_CHANNELS=1
-AUDIO_CHUNK_SIZE=3200
-```
-
-### 5. 启动开发模式
-
-推荐直接运行根目录的 dev.bat。
-
-它现在会先清理以下残留状态，再启动开发后端和 Tauri 前端：
-
-- 上一次残留的 class-assistant-backend.exe
-- 标题为 ClassAssistant-Backend 的开发后端终端
-- 监听 8765 端口的旧进程
-
-也可以手动分别启动：
-
-```bash
-cd api-service
-.venv\Scripts\python.exe -m uvicorn main:app --host 127.0.0.1 --port 8765 --reload
-```
-
-```bash
-cd app-ui
-npm run tauri dev
-```
-
-## 🧭 使用流程
-
-1. 点击“上传资料”，将 PPT / PDF / Word 解析为可引用文本。
-2. 点击“开始摸鱼”，在启动面板里填写课程名称，并可选择一份 cite 资料。
-3. 后端开始监听课堂音频，按句落盘到 data/class_transcript.txt。
-4. 命中关键词时，前端立即显示警报弹层。
-5. 需要时点击“救场”或“老师讲到哪了”，调用 LLM 生成结果。
-6. 下课后点击“总结”，生成 Markdown 笔记。
-
-## 🎙️ ASR 模式说明
-
-| 模式 | 说明 |
-| ------ | ------ |
-| local | 基于 SpeechRecognition + Google Speech API，按句回调，适合直接体验（需安装 PyAudio） |
-| webspeech | Edge/WebView2 Web Speech API，由前端采集后把文本注入后端 |
-| mock | 不录音、不识别，适合纯 UI 联调 |
-| dashscope | 阿里云百炼 Fun-ASR（需安装 PyAudio） |
-| seed-asr | 字节 Seed-ASR，使用 utterances + definite 分句，避免流式累积文本反复写盘（需安装 PyAudio） |
-
-说明：`webspeech` 与 `mock` 模式不依赖 PyAudio，可仅安装 `requirements.txt` 运行。
-
-### 当前转录策略
-
-- Local ASR 继续保持“识别完一句追加一行”的本地模式。
-- Seed-ASR 只把 definite 的稳定句子落盘，partial 文本只保存在内存中。
-- 会过滤孤立标点、极短碎片和与近期内容高度相似的重复句。
-- 每 50 条记录会触发一次 LLM 压缩，把旧内容折叠进“历史摘要”块。
-
-## 📁 运行时数据
-
-| 路径 | 用途 |
-| ------ | ------ |
-| data/class_transcript.txt | 当前课堂完整记录，含滚动历史摘要块 |
-| data/current_class_material.txt | 当前选中的参考资料文本 |
-| data/cite/ | 上传资料解析后的候选引用文本 |
-| data/keywords.txt | 用户自定义关键词 |
-| data/summaries/ | 生成的课堂笔记 |
-
-## ⚙️ 调试接口
-
-后端启动后可访问：
-
-- Swagger UI: <http://127.0.0.1:8765/docs>
-- 健康检查: <http://127.0.0.1:8765/api/health>
-- 麦克风检测: <http://127.0.0.1:8765/api/check_mic>
-
-常用 API：
-
-- POST /api/start_monitor
-- POST /api/stop_monitor
-- GET /api/cite_files
-- GET /api/settings
-- POST /api/settings
-- POST /api/emergency_rescue
-- POST /api/catchup
-- POST /api/generate_summary
-
-## 📦 打包发布
-
-```powershell
-./build.ps1 v1.2.0
-```
-
-打包流程会自动执行：
-
-1. 同步前后端版本号。
-2. 用 .venv 中的 PyInstaller 打包 FastAPI 后端。
-3. 用 Tauri 构建桌面端 exe。
-4. 组装 release 目录。
-5. 把 api-service/.env.example 同步到 release/backend/.env 与 .env.example。
-6. 用临时 .env 和独立端口 18765 做后端健康检查，结束后恢复正式配置。
-7. 输出 zip 压缩包。
-
-release 根目录现在只保留一个 课狐ClassFox.exe；后端配置会随安装包一起落到 backend/.env，用户无需再手动复制模板。
-
-## 📥 免开发环境使用
-
-从 Releases 下载 zip，解压后双击 课狐ClassFox.exe。
-
-release/backend/.env 默认已经写入试用配置；如果额度耗尽或你要切换成自己的服务，直接在应用内“设置”面板修改并保存即可。
-
-## ⭐ Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=ouyangyipeng/ClassAssistant&type=Date)](https://star-history.com/#ouyangyipeng/ClassAssistant&Date)
-
-## 📝 更新说明
-
-### v1.2.0
-
-- 品牌名更新为 课狐 ClassFox，默认窗口标题与发布包名称同步调整。
-- 发布目录改为单 exe 入口，内置启动后端，减少首次使用误操作。
-- 新增课狐启动动画遮罩，启动阶段提供更明确的状态反馈。
-- 救场与进度面板的返回区整体上移，适配当前更小的悬浮窗尺寸。
-- 告警关键词判定改为只看当前新增行，修复跨行历史误报。
-- Local ASR 调整停顿阈值并加入短时片段拼接，缓解本地识别只落前几个字的问题。
-- 设置面板底部操作区再次上移，避免保存/取消按钮被底部边框遮挡。
-- release/backend/.env 现在直接由 .env.example 构建，试用 key 可随包即用。
-
-### v1.0.1
-
-- 重构流式转录逻辑，解决 Seed-ASR 重复写盘和标点碎片问题。
-- 增加 50 行滚动摘要压缩，降低长课堂上下文膨胀。
-- 开始监控前新增课程名与 cite 资料选择面板。
-- 资料上传改为保存到 data/cite，由用户在启动监控时选择引用。
-- 新增设置面板，可直接读写后端 .env。
-- dev.bat、启动.bat 和 Tauri 退出流程都增加旧后端清理逻辑。
-- 打包脚本增加发布后端健康检查，当前已可成功产出 v1.0.1 压缩包。
-
-## License
-
-MIT
+macOS 本地问答使用的 llama.cpp 官方运行时最低要求 **13.3**，安装前会检查；较旧系统仍可选择 BYOK 或已有兼容服务。

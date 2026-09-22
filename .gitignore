@@ -9,6 +9,7 @@ __pycache__/
 
 # ---- Node / Frontend ----
 node_modules/
+.pnpm-store/
 dist/
 
 # ---- Rust / Tauri ----
@@ -38,3 +39,11 @@ api-service/build/
 api-service/dist/
 release/
 *.zip
+
+# Local UI verification artifacts
+app-ui/test-results/
+app-ui/playwright-report/
+
+# Generated documentation and local documentation cache
+site/
+.cache/

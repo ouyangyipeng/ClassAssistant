@@ -1,0 +1,30 @@
+<privacy-consent />
+<view class="page">
+  <view class="hero"><view class="eyebrow">属于你的工具</view><view class="heading">选一种上课方式</view><view class="subtitle">使用自己的服务，或连接身边的电脑。</view></view>
+  <view wx:if="error" class="error"><text selectable>{{error}}</text></view>
+  <view class="modes"><button class="{{mode === 'byok' ? 'selected' : ''}}" data-mode="byok" bindtap="setMode"><view>只带手机</view><text class="small">自带 API Key</text></button><button class="{{mode === 'desktop' ? 'selected' : ''}}" data-mode="desktop" bindtap="setMode"><view>连接电脑</view><text class="small">本地模型</text></button></view>
+  <view wx:if="mode === 'byok'">
+    <view class="section-title section">问答与笔记</view>
+    <label>问答服务</label><picker range="{{providerNames}}" value="{{providerIndex}}" bindchange="provider"><view class="picker">{{providerNames[providerIndex]}}　⌄</view></picker>
+    <label>模型名称</label><input value="{{model}}" data-field="model" bindinput="input" maxlength="200" />
+    <label>问答 API Key <text class="small muted">{{hasLlm ? '本次已填写' : '尚未填写'}}</text></label><input password value="{{llmKey}}" data-field="llmKey" bindinput="input" maxlength="4096" placeholder="仅在本次使用期间保留" />
+    <view class="divider"></view><view class="section-title">实时语音转文字</view>
+    <label>阿里云百炼服务地区</label><picker range="{{regionNames}}" value="{{regionIndex}}" bindchange="region"><view class="picker">{{regionNames[regionIndex]}}　⌄</view></picker>
+    <label>语音模型名称</label><input value="{{speechModel}}" data-field="speechModel" bindinput="input" maxlength="200" />
+    <label>语音 API Key <text class="small muted">{{hasSpeech ? '本次已填写' : '尚未填写'}}</text></label><input password value="{{speechKey}}" data-field="speechKey" bindinput="input" maxlength="4096" placeholder="与所选服务地区匹配" />
+    <view class="hint">问答与语音可使用不同 Key。同一百炼账户和地区可填写同一 Key；服务按调用计费。没有语音 Key 时仍可手动记录文字。</view>
+    <button class="quiet" bindtap="forget">清除本次填写的 Key</button>
+  </view>
+  <view wx:else class="section">
+    <view class="steps"><view><text>01</text>电脑打开课狐，下载并选择本地模型。</view><view><text>02</text>手机与电脑连接同一可互通的局域网。</view><view><text>03</text>电脑设置 → 连接微信小程序 → 开启入口。</view><view><text>04</text>扫码、核对数字，在电脑上批准。</view></view>
+    <view wx:if="paired" class="notice">电脑已批准此连接。连接最多保留 8 小时，可在电脑随时撤销。</view>
+    <button class="soft" bindtap="scan" disabled="{{busy}}">{{paired ? '重新扫码配对' : '扫描电脑二维码'}}</button>
+    <view wx:if="pairingCode" class="pairing"><view>核对两端数字一致</view><view class="digits">{{pairingCode}}</view><view class="hint">确认电脑正在显示同样的数字后，再在电脑批准。</view><button class="primary" bindtap="confirm" disabled="{{busy}}">已在电脑批准，检查连接</button></view>
+    <view class="hint">首版按本地验证交付；校园网隔离、微信局域网权限和真机兼容性需实测。连接失效后，已同步原文仍可查看和导出；新配对从新课堂开始。</view>
+  </view>
+  <view class="divider"></view><label>关键词提醒</label><textarea value="{{keywords}}" data-field="keywords" bindinput="input" maxlength="620" placeholder="用逗号分隔，例如：提问，考试，重点" /><view class="hint">听到这些词时轻振提醒。最多 20 个，每个不超过 30 字。</view>
+  <view class="actions"><button class="primary" bindtap="save">保存设置</button><button bindtap="permissions">麦克风权限</button></view>
+  <view wx:if="saved" class="notice">设置已保存，Key 仅保留在本次小程序内存。</view>
+  <button class="quiet section" bindtap="privacy">课堂数据与隐私说明</button>
+  <view class="footer">ClassFox 2.0 · 微信本地验证版</view>
+</view>
