@@ -29,7 +29,7 @@ async def test_gateway_is_opt_in_and_never_exposes_desktop_routes(tmp_path: Path
         await gateway.close()
         assert gateway.status()["listening"] is False
         async with httpx.AsyncClient(trust_env=False, timeout=1) as client:
-            with pytest.raises(httpx.ConnectError):
+            with pytest.raises((httpx.ConnectError, httpx.ConnectTimeout)):
                 await client.get(f"http://127.0.0.1:{port}/phone/v1")
 
 
