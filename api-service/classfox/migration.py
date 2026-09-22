@@ -57,7 +57,7 @@ def import_legacy_data(root: Path, store: Store) -> LegacyImportResult:
         if not path.exists():
             continue
         if path.is_symlink() or not path.resolve().is_relative_to(root) or path.stat().st_size > 20 * 1024 * 1024:
-            result.skipped_files.append(str(path.relative_to(root)))
+            result.skipped_files.append(path.relative_to(root).as_posix())
             continue
         try:
             text = path.read_text(encoding="utf-8-sig")
@@ -75,5 +75,5 @@ def import_legacy_data(root: Path, store: Store) -> LegacyImportResult:
                 store.import_session(fingerprint, path.stem, [], summary=text, at=at)
                 result.notes += 1
         except (UnicodeError, ValueError):
-            result.skipped_files.append(str(path.relative_to(root)))
+            result.skipped_files.append(path.relative_to(root).as_posix())
     return result

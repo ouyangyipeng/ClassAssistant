@@ -16,7 +16,14 @@ SERVER = """
 import argparse
 import json
 import os
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, HTTPServer as BaseHTTPServer
+from socketserver import TCPServer
+class HTTPServer(BaseHTTPServer):
+    def server_bind(self):
+        # A loopback fixture must not wait for the runner's reverse DNS service.
+        TCPServer.server_bind(self)
+        self.server_name = 'localhost'
+        self.server_port = self.server_address[1]
 parser = argparse.ArgumentParser()
 parser.add_argument('--port', type=int)
 args, _ = parser.parse_known_args()
