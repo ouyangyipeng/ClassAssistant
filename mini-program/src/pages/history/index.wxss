@@ -1,0 +1,24 @@
+.history-item {
+  padding: 24rpx 0 30rpx;
+  border-bottom: 1rpx solid var(--line);
+}
+.history-main {
+  padding: 10rpx 0;
+}
+.history-main .section-title {
+  margin: 0;
+}
+.arrow {
+  color: var(--accent);
+  font-size: 36rpx;
+}
+.counts {
+  color: var(--green);
+  margin-top: 12rpx;
+}
+.history-item .actions {
+  margin-top: 12rpx;
+}
+.history-item button {
+  padding: 15rpx;
+}

@@ -1,0 +1,12 @@
+{
+  "pages": ["pages/classroom/index", "pages/history/index", "pages/settings/index"],
+  "window": { "navigationBarTitleText": "课狐 ClassFox", "navigationBarBackgroundColor": "#f8f7f4", "navigationBarTextStyle": "black", "backgroundColor": "#f8f7f4" },
+  "tabBar": {
+    "color": "#757970", "selectedColor": "#aa5929", "backgroundColor": "#f8f7f4", "borderStyle": "white",
+    "list": [ { "pagePath": "pages/classroom/index", "text": "课堂" }, { "pagePath": "pages/history/index", "text": "回顾" }, { "pagePath": "pages/settings/index", "text": "设置" } ]
+  },
+  "permission": { "scope.record": { "desc": "将你主动录制的课堂语音转为文字，便于回顾和整理笔记" } },
+  "networkTimeout": { "request": 90000, "connectSocket": 15000 },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

@@ -1,0 +1,51 @@
+.modes {
+  display: flex;
+  gap: 18rpx;
+}
+.modes button {
+  flex: 1;
+  padding: 26rpx 14rpx;
+  text-align: left;
+}
+.modes .selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.steps {
+  margin-bottom: 26rpx;
+}
+.steps view {
+  padding: 14rpx 0;
+  font-size: 26rpx;
+}
+.steps text {
+  display: inline-block;
+  width: 56rpx;
+  color: var(--accent);
+  font-weight: 600;
+}
+.pairing {
+  padding: 30rpx;
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  border-radius: 20rpx;
+  text-align: center;
+  margin-top: 24rpx;
+}
+.digits {
+  font-size: 62rpx;
+  letter-spacing: 12rpx;
+  color: var(--accent);
+  font-weight: 650;
+  padding: 20rpx 0;
+}
+.pairing button {
+  margin-top: 24rpx;
+}
+.footer {
+  text-align: center;
+  font-size: 22rpx;
+  color: var(--muted);
+  padding-top: 32rpx;
+}

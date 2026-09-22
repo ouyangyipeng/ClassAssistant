@@ -1,0 +1,63 @@
+[project]
+name = "classfox-service"
+version = "2.0.0"
+description = "Local-first classroom transcription and assistance"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+  "fastapi>=0.115.6,<1",
+  "uvicorn[standard]>=0.34,<1",
+  "python-multipart>=0.0.20,<1",
+  "pydantic>=2.10,<3",
+  "python-dotenv>=1.0,<2",
+  "httpx>=0.28,<1",
+  "openai>=1.58.1,<3",
+  "platformdirs>=4,<5",
+  "keyring>=25,<26",
+  "websockets>=17,<18",
+  "python-pptx>=1.0.2,<2",
+  "pypdf>=6,<7",
+  "python-docx>=1.1,<2",
+  "cryptography>=50,<51",
+]
+
+[project.optional-dependencies]
+audio = [
+  "sherpa-onnx==1.13.8",
+  "sherpa-onnx-core==1.13.8",
+  "sounddevice>=0.5,<1",
+  "numpy>=2,<3",
+  "dashscope>=1.20,<2",
+  "websocket-client>=1.8,<2",
+  "SpeechRecognition>=3.10,<4",
+]
+bundle = ["pyinstaller>=6,<7"]
+
+[dependency-groups]
+docs = ["zensical==0.0.63"]
+dev = [
+  "pytest>=8,<10",
+  "pytest-asyncio>=1,<2",
+  "ruff>=0.12,<1",
+  "isort>=6,<8",
+  "ty>=0.0.1,<1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 160
+
+[tool.ruff.lint]
+select = ["E", "F", "B", "UP", "SIM"]
+
+[tool.isort]
+profile = "black"
+line_length = 160
+skip = [".venv", "build", "dist"]
+
+[tool.ty.src]
+include = ["classfox", "tests", "main.py"]
