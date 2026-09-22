@@ -54,12 +54,12 @@ def import_legacy_data(root: Path, store: Store) -> LegacyImportResult:
     result = LegacyImportResult()
     files = [root / "class_transcript.txt", *sorted((root / "cite").glob("*.txt")), *sorted((root / "summaries").glob("*.md"))]
     for path in files:
-        if not path.exists():
-            continue
-        if path.is_symlink() or not path.resolve().is_relative_to(root) or path.stat().st_size > 20 * 1024 * 1024:
-            result.skipped_files.append(path.relative_to(root).as_posix())
-            continue
         try:
+            if not path.exists():
+                continue
+            if path.is_symlink() or not path.resolve().is_relative_to(root) or path.stat().st_size > 20 * 1024 * 1024:
+                result.skipped_files.append(path.relative_to(root).as_posix())
+                continue
             text = path.read_text(encoding="utf-8-sig")
             if not text.strip():
                 continue
@@ -74,6 +74,6 @@ def import_legacy_data(root: Path, store: Store) -> LegacyImportResult:
             else:
                 store.import_session(fingerprint, path.stem, [], summary=text, at=at)
                 result.notes += 1
-        except (UnicodeError, ValueError):
+        except (OSError, UnicodeError, ValueError):
             result.skipped_files.append(path.relative_to(root).as_posix())
     return result

@@ -1,4 +1,4 @@
-<view wx:if="visible" class="overlay" catchtouchmove="blockTouch">
+<view wx:if="{{visible}}" class="overlay" catchtouchmove="blockTouch">
   <view class="dialog">
     <view class="title">先了解课堂数据如何使用</view>
     <view class="copy">录音、剪贴板和文件分享需要你的同意。课狐只在你主动操作时使用相应能力，原文与笔记保存在本机。</view>

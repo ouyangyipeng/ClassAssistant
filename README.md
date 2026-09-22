@@ -4,7 +4,7 @@
 
 课狐把课堂转录、关键词提醒、即时问答和课后笔记放在一个桌面工作区里。每堂课独立保存原文；可以下载本地语音与问答模型，也可以使用自己的服务商 API Key（BYOK）。微信小程序计划在 v2.5 正式交付，已有开发预览代码。
 
-**当前为 2.0 开发与发布验证分支。** 安装包、在线账户实测、微信真机和商店上架分别验收，具体边界见 [验证记录](docs/project/validation.md)。微信预览没有公开 AppID，不属于 v2.0 正式验收范围。
+**v2.0 聚焦桌面体验、原文保留和本地模型。** 安装包、在线账户实测、微信真机和商店上架分别验收，具体边界见 [验证记录](docs/project/validation.md)。微信预览没有公开 AppID，不属于 v2.0 正式验收范围。
 
 [下载安装包](https://github.com/ouyangyipeng/ClassAssistant/releases) · [首次使用](docs/user-guide/quickstart.md) · [升级与数据迁移](docs/user-guide/migration.md) · [微信小程序](mini-program/README.md) · [更新记录](CHANGELOG.md)
 

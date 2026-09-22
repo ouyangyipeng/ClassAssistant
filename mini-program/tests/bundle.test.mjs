@@ -4,6 +4,14 @@ import vm from "node:vm";
 import { readFile } from "node:fs/promises";
 
 const dist = new URL("../dist/", import.meta.url);
+test("built WXML conditional directives evaluate data expressions", async () => {
+  for (const file of ["components/privacy/index.wxml", "pages/classroom/index.wxml", "pages/history/index.wxml", "pages/settings/index.wxml"]) {
+    const template = await readFile(new URL(file, dist), "utf8");
+    for (const match of template.matchAll(/wx:(?:if|elif)="([^"]+)"/g)) {
+      assert.match(match[1], /^\{\{[\s\S]+\}\}$/, `${file}: conditional must bind to page data`);
+    }
+  }
+});
 test("the built native pages share one runtime and persist a text classroom across navigation", async () => {
   const stored = new Map();
   let recorderOwners = 0,
