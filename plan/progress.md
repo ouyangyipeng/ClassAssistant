@@ -3,11 +3,14 @@
 ## 当前状态
 
 - 用户已确认整体方案，持续实施；无需重新审批常规步骤。
-- 基线 `1ea0b9b`，分支 `feat/classfox-v2`；尚未 commit/push。
-- 阶段 A 的新后端基础已完成验证，入口已切换；B/C/D/E 进行中，F 尚未开始。
+- 基线 `1ea0b9b`，分支 `feat/classfox-v2`，变更已推送至 PR #13。
+- v2 桌面实现与独立审查已完成，正在完成三平台安装包门禁；微信正式交付推迟到 v2.5。
+- 用户于 2026-09-23 授权：v2 验证完成后直接 Rebase and merge 到主分支并发布。
 - 完整规格与验收条件：`00-v1-classfox-v2.md`。
 
 ## 已有证据
+
+- 2026-09-23：PR `e5ebadb` 的 Windows x64、macOS arm64、Web/微信及文档 CI 通过；Intel Mac 的源码回归通过，但冻结包的 cryptography 导入失败，尚不可发布。该平台 cryptography 50 源码构建链接 Homebrew OpenSSL 动态库；改用官方支持的 `OPENSSL_STATIC=1`，由 uv 按包构建配置缓存并重建，保留当前依赖版本。最终三平台结果待新提交 CI 验证。
 
 - 2026-09-22：公开远端与本地 main SHA 一致；issues、PR、mac/docs 分支及发布资产已检查。
 - 使用 Python 3.12.13 与临时夹具复现：cite 路径越界、午夜时间窗口错误、压缩移除原文、新课覆盖旧文件。
