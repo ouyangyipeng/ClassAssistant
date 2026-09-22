@@ -1,8 +1,8 @@
 <privacy-consent />
 <view class="page">
   <view class="hero"><view class="eyebrow">每一堂课，都有来处</view><view class="heading">回顾与整理</view><view class="subtitle">原文一直保留，笔记随时重读。</view></view>
-  <view wx:if="error" class="error"><text selectable>{{error}}</text></view>
-  <view wx:if="!records.length" class="empty">还没有课堂记录<view class="small">开始第一堂课，原文就会保存在这里。</view></view>
+  <view wx:if="{{error}}" class="error"><text selectable>{{error}}</text></view>
+  <view wx:if="{{!records.length}}" class="empty">还没有课堂记录<view class="small">开始第一堂课，原文就会保存在这里。</view></view>
   <view wx:for="{{records}}" wx:key="id" class="history-item">
     <view class="history-main" data-id="{{item.id}}" bindtap="open"><view class="row"><view class="section-title">{{item.name}}</view><text class="arrow">↗</text></view><view class="muted small">{{item.date}} · {{item.mode}}</view><view class="small counts">{{item.count}} 条原文　{{item.notes}} 份笔记</view></view>
     <view class="actions"><button data-id="{{item.id}}" bindtap="export" disabled="{{busy}}">导出</button><button class="quiet danger" data-id="{{item.id}}" bindtap="remove">删除本机记录</button></view>

@@ -81,3 +81,29 @@ def test_database_failure_rolls_back_entire_import_and_allows_retry(tmp_path: Pa
     assert result.session_id is not None
     assert len(store.list_entries(result.session_id)) == 2
     store.close()
+
+
+@pytest.mark.parametrize("operation", ["stat", "read_text"])
+def test_unreadable_file_is_reported_without_aborting_other_imports(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, operation: str) -> None:
+    legacy = tmp_path / "legacy"
+    (legacy / "cite").mkdir(parents=True)
+    blocked = legacy / "class_transcript.txt"
+    blocked.write_text("保留原文件", encoding="utf-8")
+    (legacy / "cite" / "healthy.txt").write_text("可导入资料", encoding="utf-8")
+    original = getattr(Path, operation)
+
+    def denied(path: Path, *args: object, **kwargs: object) -> object:
+        if path == blocked:
+            raise PermissionError("synthetic denied file")
+        return original(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, operation, denied)
+    store = Store(tmp_path / "db.sqlite3")
+    try:
+        result = import_legacy_data(legacy, store)
+        assert result.session_id is None
+        assert result.materials == 1
+        assert result.skipped_files == ["class_transcript.txt"]
+        assert store.list_materials()[0].text == "可导入资料"
+    finally:
+        store.close()
