@@ -32,6 +32,9 @@ audio = [
 ]
 bundle = ["pyinstaller>=6,<7"]
 
+[tool.uv.extra-build-variables]
+cryptography = { OPENSSL_STATIC = "1" }
+
 [dependency-groups]
 docs = ["zensical==0.0.63"]
 dev = [

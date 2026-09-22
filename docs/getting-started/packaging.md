@@ -17,6 +17,8 @@ uv run --no-project --python 3.12 scripts/build.py --bundles nsis
 
 构建脚本检查 Python、前端、Cargo、Tauri 和握手版本一致，使用锁文件，运行冻结后端自检，再构建桌面。输出位于 `app-ui/src-tauri/target/release/bundle/`；冻结后端在 `api-service/dist/classfox-service/`。源码运行 `.venv` 不随桌面分发。
 
+Intel Mac 使用的 cryptography 50 没有对应预编译 wheel，需要源码构建。项目通过 uv 的 `extra-build-variables` 为该包设置 `OPENSSL_STATIC=1`，避免冻结包中的 OpenSSL 动态库冲突；构建机需安装 Homebrew `openssl@3`。该配置遵循 [cryptography 的 macOS 构建说明](https://cryptography.io/en/50.0.1/installation/#building-cryptography-on-macos)，uv 会在构建变量变化后重新构建该包。Apple Silicon 和 Windows 仍使用可用的官方 wheel。
+
 包内不包含 `.env`、共享 Key、课堂数据库或模型权重。用户首次启动后选择本地下载或 BYOK。所有资源在应用目录内读取，课堂和模型数据写入用户目录。
 
 ## 签名状态
