@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6f3eb" />
+    <title>ClassFox 课狐 — 把注意力，留在课堂。</title>
+    <meta
+      name="description"
+      content="ClassFox 2.0，把课堂原文、即时问答与课后笔记放进一个安静的桌面工作区。本地模型或自带 API Key，macOS 与 Windows 免费开源。"
+    />
+    <link rel="canonical" href="https://class.nexa-lang.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:title" content="ClassFox 2.0 — 把注意力，留在课堂。" />
+    <meta
+      property="og:description"
+      content="听见、跟上、留下。你的本地优先课堂助手，现已登陆 macOS 与 Windows。"
+    />
+    <meta property="og:url" content="https://class.nexa-lang.com/" />
+    <meta
+      property="og:image"
+      content="https://class.nexa-lang.com/assets/thought-to-notes.jpg"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="stylesheet" href="assets/site.css" />
+    <script src="assets/site.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+    <header class="nav-wrap">
+      <nav class="nav container" aria-label="主导航">
+        <a class="wordmark" href="./" aria-label="ClassFox 首页"
+          ><img src="assets/fox.png" alt="" width="42" height="42" /><span
+            >ClassFox<small>课狐</small></span
+          ></a
+        >
+        <div class="nav-links">
+          <a href="#experience">体验</a><a href="#local">本地优先</a
+          ><a href="guide/">文档 <span aria-hidden="true">↗</span></a
+          ><a
+            class="nav-github"
+            href="https://github.com/ouyangyipeng/ClassAssistant"
+            >GitHub <span aria-hidden="true">↗</span></a
+          >
+        </div>
+        <a class="button button-small button-dark" href="#download"
+          >下载课狐 <span aria-hidden="true">↓</span></a
+        >
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero container" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <a
+            class="release-label"
+            href="https://github.com/ouyangyipeng/ClassAssistant/releases/latest"
+            ><span class="status-dot" aria-hidden="true"></span> MEET CLASSFOX
+            2.0 <span aria-hidden="true">↗</span></a
+          >
+          <h1 id="hero-title">把注意力，<br /><em>留在课堂。</em></h1>
+          <p class="hero-description">
+            有些瞬间，值得认真听。<br />课堂原文、即时问答、课后笔记，<br
+              class="desktop-break"
+            />交给身边这只小狐狸。
+          </p>
+          <div class="hero-actions">
+            <a class="button button-orange" href="#download"
+              >免费开始 <span aria-hidden="true">↗</span></a
+            ><a class="text-link" href="#experience"
+              >看看它怎么工作 <span aria-hidden="true">↓</span></a
+            >
+          </div>
+          <p class="hero-footnote">
+            macOS & Windows <span>·</span> 本地优先 <span>·</span> MIT 开源
+          </p>
+        </div>
+        <div class="hero-art">
+          <img
+            src="assets/thought-to-notes.jpg"
+            width="1536"
+            height="1024"
+            alt="橙色声波丝带逐渐串起纸张，寓意把课堂思路留成笔记"
+            fetchpriority="high"
+          /><span class="art-caption mono"
+            >FROM A MOMENT<br />TO SOMETHING THAT STAYS.</span
+          ><span class="art-index mono" aria-hidden="true">CF / 02</span>
+        </div>
+      </section>
+
+      <section
+        class="product container"
+        id="experience"
+        aria-labelledby="product-title"
+      >
+        <div class="section-top">
+          <p class="eyebrow">01 / A QUIETER WORKSPACE</p>
+          <p class="small-copy">少切换一个窗口，多跟上一段思路。</p>
+        </div>
+        <div class="product-heading">
+          <h2 id="product-title">一堂课，一个工作区。</h2>
+          <p>原文在左，思路在右。需要的时候，<br />课堂助手就在你手边。</p>
+        </div>
+        <div class="preview-tabs" role="tablist" aria-label="产品界面预览">
+          <button
+            id="preview-classroom"
+            role="tab"
+            aria-selected="true"
+            aria-controls="product-preview"
+            data-preview="classroom"
+            tabindex="0"
+          >
+            课堂与问答</button
+          ><button
+            id="preview-notes"
+            role="tab"
+            aria-selected="false"
+            aria-controls="product-preview"
+            data-preview="notes"
+            tabindex="-1"
+          >
+            课后笔记
+          </button>
+        </div>
+        <div
+          class="product-stage"
+          id="product-preview"
+          role="tabpanel"
+          aria-labelledby="preview-classroom"
+        >
+          <img
+            id="preview-image"
+            src="assets/classroom.png"
+            width="1280"
+            height="820"
+            alt="ClassFox 实际课堂界面：左侧保存二叉树遍历原文，右侧显示课堂助手的回答"
+            loading="lazy"
+          />
+        </div>
+        <div class="image-caption">
+          <span id="preview-caption"
+            >实际应用界面 · 合成课堂与模型回答，仅作功能演示</span
+          ><span class="mono">CLASSFOX / DESKTOP</span>
+        </div>
+        <div class="feature-strip">
+          <div>
+            <span class="feature-number">01</span>
+            <h3>听过的，留得住。</h3>
+            <p>
+              每堂课独立保存原文，按时间回看、搜索和导出。笔记另存，原文一直在。
+            </p>
+          </div>
+          <div>
+            <span class="feature-number">02</span>
+            <h3>没跟上的，接着问。</h3>
+            <p>
+              救场、进度、追问，结合课堂内容和资料逐段回答。你可以随时停止生成。
+            </p>
+          </div>
+          <div>
+            <span class="feature-number">03</span>
+            <h3>下课后，还能接着学。</h3>
+            <p>
+              把长课堂整理成 Markdown 笔记。回到原文核对，再带到你的学习工作流。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="focus-section">
+        <div class="container focus-grid">
+          <div>
+            <p class="eyebrow">02 / THERE WHEN YOU NEED IT</p>
+            <h2>
+              轻轻待在一旁。<br /><span class="muted">关键时刻，跟上。</span>
+            </h2>
+            <p class="body-copy">
+              展开，是完整课堂工作区。收起，是安静的置顶紧凑窗。设置关键词提醒，把注意力留给正在发生的事。
+            </p>
+            <a class="text-link" href="user-guide/features/"
+              >了解课堂工作流 <span aria-hidden="true">↗</span></a
+            >
+          </div>
+          <div class="compact-composition">
+            <div class="orbit orbit-one" aria-hidden="true"></div>
+            <div class="orbit orbit-two" aria-hidden="true"></div>
+            <p class="mono floating-label">
+              A LITTLE FOX.<br />A LITTLE MORE FOCUS.
+            </p>
+            <img
+              src="assets/compact.png"
+              alt="ClassFox 实际紧凑窗：课堂名称、连接状态和记录控制"
+              width="430"
+              height="150"
+              loading="lazy"
+            /><span class="compact-caption">小一点，也刚刚好。</span>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="local-section container"
+        id="local"
+        aria-labelledby="local-title"
+      >
+        <div class="section-top">
+          <p class="eyebrow">03 / YOUR CLASS. YOUR CHOICE.</p>
+          <span class="mono">LOCAL FIRST, ALWAYS YOURS.</span>
+        </div>
+        <div class="local-heading">
+          <h2 id="local-title">模型在哪里运行，<br />由你决定。</h2>
+          <p class="body-copy">
+            不绑定一种模型，不分发共享 Key。<br />选本地，或接入你熟悉的服务商。
+          </p>
+        </div>
+        <div class="mode-grid">
+          <article class="mode mode-local">
+            <div class="mode-head">
+              <span class="mono">01 — ON YOUR DEVICE</span
+              ><span class="mode-tag">本地模式</span>
+            </div>
+            <div class="local-diagram" aria-hidden="true">
+              <span class="diagram-node">课堂音频</span
+              ><span class="diagram-line"></span>
+              <div class="device">
+                <span class="device-screen"
+                  ><img
+                    src="assets/fox.png"
+                    alt=""
+                    width="38"
+                    height="38"
+                  /><small>YOUR COMPUTER</small></span
+                >
+              </div>
+              <span class="diagram-line"></span
+              ><span class="diagram-node">原文与笔记</span>
+            </div>
+            <h3>下载一次，留在本机。</h3>
+            <p>
+              在应用内安装离线语音与问答模型。下载校验、进度、续传与课前预热，都在设置里完成。
+            </p>
+            <ul>
+              <li>SenseVoice 离线识别 + Qwen 本地问答</li>
+              <li>使用本地模型时，音频与课堂文字在电脑处理</li>
+              <li>首次下载需要网络与约 3 GB 模型空间</li>
+            </ul>
+          </article>
+          <article class="mode mode-cloud">
+            <div class="mode-head">
+              <span class="mono">02 — BRING YOUR OWN KEY</span
+              ><span class="mode-tag">BYOK</span>
+            </div>
+            <div class="provider-types" aria-hidden="true">
+              <span>ASR<small>语音识别</small></span
+              ><i>+</i><span>LLM<small>课堂问答</small></span>
+            </div>
+            <h3>你的服务，你的选择。</h3>
+            <p>
+              语音识别与问答服务可以分别配置。填入自己的 API
+              Key，测试连接，再开始一堂课。
+            </p>
+            <ul>
+              <li>支持预设服务商与兼容接口</li>
+              <li>相应音频或文字会发送给所选服务商</li>
+              <li>服务费用与可用性由服务商决定</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="open-section container">
+        <div class="open-mark" aria-hidden="true">
+          { <img src="assets/fox.png" width="76" height="76" alt="" /> }
+        </div>
+        <div>
+          <p class="eyebrow">BUILT IN THE OPEN</p>
+          <h2>学习工具，也应该可以被理解。</h2>
+          <p>
+            代码公开，记录可导出。欢迎从一个问题、一条建议、<br
+              class="desktop-break"
+            />一次 Pull Request 开始，让课狐变得更好。
+          </p>
+          <a
+            class="text-link"
+            href="https://github.com/ouyangyipeng/ClassAssistant"
+            >在 GitHub 上一起构建 <span aria-hidden="true">↗</span></a
+          >
+        </div>
+      </section>
+
+      <section class="faq-section container" aria-labelledby="faq-title">
+        <div>
+          <p class="eyebrow">A FEW THINGS TO KNOW</p>
+          <h2 id="faq-title">开始之前。</h2>
+          <p class="body-copy">把能做的说清楚，<br />也把边界留在明处。</p>
+        </div>
+        <div class="faq-list">
+          <details>
+            <summary>课狐免费吗？</summary>
+            <p>
+              应用代码使用 MIT
+              许可证，可免费下载和使用。本地模型需要自己的计算资源；BYOK
+              服务可能产生费用，由相应服务商计费。模型和依赖遵循各自的上游许可。
+            </p>
+          </details>
+          <details>
+            <summary>我的电脑能运行本地模型吗？</summary>
+            <p>
+              模型需要约 3 GB
+              下载空间，安装时还需要临时空间，实际内存占用和速度取决于设备。macOS
+              本地问答运行时要求 13.3 或更高版本；你也可以使用 BYOK。先查看<a
+                href="user-guide/quickstart/"
+                >首次使用指南</a
+              >。
+            </p>
+          </details>
+          <details>
+            <summary>下载后遇到系统安全提示怎么办？</summary>
+            <p>
+              macOS 安装包目前使用 ad-hoc 签名，尚未完成 Developer ID
+              签名与公证；Windows
+              安装包没有商业代码签名，可能出现系统信誉提示。请从本项目发布页下载并核对校验和，详见<a
+                href="user-guide/faq/"
+                >常见问题</a
+              >。
+            </p>
+          </details>
+          <details>
+            <summary>可以直接在微信里使用吗？</summary>
+            <p>
+              微信小程序安排在 v2.5 正式交付。目前只有开发预览，尚未完成
+              AppID、微信开发者工具、真机与上架验收。v2.0
+              的正式使用入口是桌面应用。
+            </p>
+          </details>
+          <details>
+            <summary>如何从旧版本升级？</summary>
+            <p>
+              先退出旧版并备份数据和配置，再通过新版「设置 →
+              导入旧版本」迁移。原文件保留，已被旧版本覆盖或压缩掉的原文无法恢复。查看<a
+                href="user-guide/migration/"
+                >完整迁移说明</a
+              >。
+            </p>
+          </details>
+        </div>
+      </section>
+
+      <section
+        class="download-section"
+        id="download"
+        aria-labelledby="download-title"
+      >
+        <div class="container">
+          <div class="download-heading">
+            <p class="eyebrow">READY FOR YOUR NEXT CLASS</p>
+            <h2 id="download-title">下一堂课，<br /><em>带上课狐。</em></h2>
+            <p>安装应用，选择模型。<br />剩下的，从认真听见第一句话开始。</p>
+          </div>
+          <div class="download-grid">
+            <a
+              class="download-card"
+              href="https://github.com/ouyangyipeng/ClassAssistant/releases/download/v2.0.1/ClassFox_2.0.1_aarch64.dmg"
+              ><span class="download-os"
+                >macOS <span aria-hidden="true">↗</span></span
+              ><strong>Apple Silicon</strong><span>M 系列芯片 · DMG</span></a
+            ><a
+              class="download-card"
+              href="https://github.com/ouyangyipeng/ClassAssistant/releases/download/v2.0.1/ClassFox_2.0.1_x64.dmg"
+              ><span class="download-os"
+                >macOS <span aria-hidden="true">↗</span></span
+              ><strong>Intel</strong><span>Intel 芯片 · DMG</span></a
+            ><a
+              class="download-card"
+              href="https://github.com/ouyangyipeng/ClassAssistant/releases/download/v2.0.1/ClassFox_2.0.1_x64-setup.exe"
+              ><span class="download-os"
+                >Windows <span aria-hidden="true">↗</span></span
+              ><strong>x64</strong><span>64 位系统 · EXE</span></a
+            >
+          </div>
+          <div class="download-footer">
+            <span>v2.0.1 · 模型在应用内单独下载</span
+            ><a
+              href="https://github.com/ouyangyipeng/ClassAssistant/releases/latest"
+              >发布说明与 SHA-256 校验和 <span aria-hidden="true">↗</span></a
+            >
+          </div>
+          <p class="download-disclosure">
+            安装包签名状态见上方常见问题。录音前请取得参与者的知情同意；识别与模型回答需结合课堂原文核实。
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer container">
+      <a class="wordmark" href="./"
+        ><img
+          src="assets/fox.png"
+          alt="课狐狐狸标识"
+          width="36"
+          height="36"
+        /><span>ClassFox</span></a
+      >
+      <p>为每一个想跟上思路的瞬间。</p>
+      <div>
+        <a href="guide/">文档</a
+        ><a href="https://github.com/ouyangyipeng/ClassAssistant/issues">反馈</a
+        ><a
+          href="https://github.com/ouyangyipeng/ClassAssistant/blob/main/LICENSE"
+          >MIT License</a
+        >
+      </div>
+      <small>© 2026 ClassFox contributors</small>
+    </footer>
+  </body>
+</html>

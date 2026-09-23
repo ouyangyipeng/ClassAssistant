@@ -33,6 +33,12 @@ jobs:
           python-version: '3.12'
       - run: uv sync --project api-service --locked --only-group docs
       - run: uv run --project api-service --no-sync zensical build --strict
+      - name: Assemble product homepage and documentation
+        run: |
+          cp -R website/. site/
+          test -f site/guide/index.html
+          test -f site/assets/classroom.png
+          test -f site/assets/site.js
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: site

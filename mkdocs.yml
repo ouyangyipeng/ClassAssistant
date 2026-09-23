@@ -1,13 +1,13 @@
 site_name: 课狐 ClassFox
-site_description: 课堂原文、本地模型与微信基础版的使用和开发文档。
-site_url: http://oyyp.nexa-lang.com/ClassAssistant/
+site_description: ClassFox 2.0 的课堂原文、本地模型、问答与笔记使用指南。
+site_url: https://class.nexa-lang.com/
 repo_url: https://github.com/ouyangyipeng/ClassAssistant
 repo_name: ouyangyipeng/ClassAssistant
 theme:
   language: zh
   variant: modern
-  logo: img/logo透明背景.png
-  favicon: img/logo.png
+  logo: img/fox.png
+  favicon: img/favicon.png
   font: false
   palette:
     - media: '(prefers-color-scheme: light)'
@@ -37,7 +37,7 @@ markdown_extensions:
       permalink: true
   - pymdownx.superfences
 nav:
-  - 首页: index.md
+  - 使用指南: guide.md
   - 使用:
       - 首次使用: user-guide/quickstart.md
       - 课堂工作流: user-guide/features.md
@@ -48,6 +48,7 @@ nav:
       - 环境准备: getting-started/environment.md
       - 开发与验证: getting-started/development.md
       - 打包与发布: getting-started/packaging.md
+      - 官网与品牌: getting-started/website.md
       - 系统架构: project/architecture.md
       - 数据与配置: project/data-and-config.md
       - 接口与迁移: developer/api-reference.md

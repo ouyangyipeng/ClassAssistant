@@ -54,7 +54,7 @@ async def close(process: asyncio.subprocess.Process) -> None:
 async def test_owned_launcher_auth_readiness_and_shutdown(tmp_path: Path, shutdown: str) -> None:
     process, ready = await launch(tmp_path / "中文 data")
     try:
-        assert ready["type"] == "ready" and ready["version"] == "2.0.0"
+        assert ready["type"] == "ready" and ready["version"] == "2.0.1"
         port, token = ready["port"], ready["token"]
         assert isinstance(port, int) and isinstance(token, str) and len(token) >= 32
         async with httpx.AsyncClient(base_url=f"http://127.0.0.1:{port}", trust_env=False) as client:

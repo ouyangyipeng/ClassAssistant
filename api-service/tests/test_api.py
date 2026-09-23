@@ -4,7 +4,7 @@ from httpx import AsyncClient
 async def test_health_works_without_a_model_key_and_exposes_no_paths(client: AsyncClient) -> None:
     response = await client.get("/api/health")
     assert response.status_code == 200
-    assert response.json() == {"status": "healthy", "version": "2.0.0"}
+    assert response.json() == {"status": "healthy", "version": "2.0.1"}
 
 
 async def test_credentials_required_for_settings_and_classroom_data(client: AsyncClient) -> None:
