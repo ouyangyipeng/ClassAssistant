@@ -40,4 +40,4 @@ macOS 缺少 `APPLE_SIGNING_IDENTITY` 时使用临时 ad-hoc 签名。它用于�
 
 ## 文档部署
 
-文档构建工作流可生成静态站点。当前仓库 Pages 仍从 `docs` 分支根目录发布；现有地址为 `http://oyyp.nexa-lang.com/ClassAssistant/`。切换到 GitHub Actions 部署需维护者确认 Pages 的发布来源，再手动触发部署，保留现有域名与路径。不会自动强推或删除 `docs` 分支。
+GitHub Actions 构建技术文档并组合 `website/` 产品主页，手动触发 `deploy=true` 后部署主分支。产品主页使用 `https://class.nexa-lang.com/`，技术文档入口为 `/guide/`，原有文档内容路径保持不变。历史 `docs` 分支保留。域名与素材维护见[官网与品牌](website.md)。

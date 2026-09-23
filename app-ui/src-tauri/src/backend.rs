@@ -266,7 +266,7 @@ mod tests {
         for input in [
             "invalid",
             r#"{"type":"error","message":"synthetic-private-detail"}"#,
-            r#"{"type":"ready","port":8765,"token":"bad\r\nheader","version":"2.0.0"}"#,
+            r#"{"type":"ready","port":8765,"token":"bad\r\nheader","version":"2.0.1"}"#,
         ] {
             let result = validate_ready(input);
             assert!(result.is_err());

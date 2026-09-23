@@ -26,6 +26,12 @@ export default defineConfig({
   },
   webServer: [
     {
+      command: `"${python}" -m http.server 18866 --bind 127.0.0.1 --directory website`,
+      cwd: root,
+      port: 18866,
+      reuseExistingServer: false,
+    },
+    {
       command: `"${python}" tests/ui_server.py`,
       cwd: path.join(root, "api-service"),
       env: { PYTHONPATH: "." },
