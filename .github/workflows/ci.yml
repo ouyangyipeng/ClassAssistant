@@ -99,7 +99,7 @@ jobs:
           uv run --no-sync ruff format --config pyproject.toml --check classfox tests main.py ../scripts/*.py
           uv run --no-sync ty check
           uv run --no-sync pytest -q
-      - run: uv run --project api-service --no-sync ty check --project . scripts
+      - run: uv run --project api-service --no-sync ty check --project . --extra-search-path api-service scripts
       - run: uv run --project api-service --no-sync python -m unittest discover -s scripts -p 'test_*.py'
       - run: pnpm --dir app-ui install --frozen-lockfile
       - run: pnpm --dir app-ui build
@@ -122,7 +122,7 @@ jobs:
           uv run --no-sync pytest -q tests/test_launcher.py
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: ClassFox-2.0.1-${{ matrix.platform }}-unsigned
+          name: ClassFox-2.1.0-${{ matrix.platform }}-unsigned
           path: |
             app-ui/src-tauri/target/release/bundle/dmg/*.dmg
             app-ui/src-tauri/target/release/bundle/nsis/*.exe

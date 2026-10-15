@@ -19,7 +19,9 @@ uv run --no-project --python 3.12 scripts/build.py --bundles nsis
 
 Intel Mac 使用的 cryptography 50 没有对应预编译 wheel，需要源码构建。项目通过 uv 的 `extra-build-variables` 为该包设置 `OPENSSL_STATIC=1`，避免冻结包中的 OpenSSL 动态库冲突；构建机需安装 Homebrew `openssl@3`。该配置遵循 [cryptography 的 macOS 构建说明](https://cryptography.io/en/50.0.1/installation/#building-cryptography-on-macos)，uv 会在构建变量变化后重新构建该包。Apple Silicon 和 Windows 仍使用可用的官方 wheel。
 
-包内不包含 `.env`、共享 Key、课堂数据库或模型权重。用户首次启动后选择本地下载或 BYOK。所有资源在应用目录内读取，课堂和模型数据写入用户目录。
+构建时运行 `scripts/model_assets.py`，下载并核对固定 SHA-256 的 Silero VAD 和当前平台 llama.cpp 运行包，再随冻结后端打包。冻结自检会再次校验这两个资源。包内不包含 `.env`、共享 Key、课堂数据库或大模型权重。用户首次启动后选择在线下载、导入离线模型包或 BYOK。课堂和已安装模型数据写入用户目录。
+
+运行 `api-service/.venv/bin/python scripts/offline_models.py` 可生成通用的语音与问答离线 ZIP 包及 `MODEL-SHA256SUMS.txt`。脚本固定来源、验证文件哈希并附带许可证和作者归属；模型包不包含可执行运行库。离线包通过桌面设置中的“导入离线包”读取，不需要先解压。Qwen 包大于 GitHub Release 单附件大小上限，使用官网提供的百度网盘分发。
 
 ## 签名状态
 

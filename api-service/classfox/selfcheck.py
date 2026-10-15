@@ -27,5 +27,13 @@ def self_check() -> int:
             importlib.import_module(name)
         except Exception as error:
             failures[name] = type(error).__name__
+    if getattr(sys, "frozen", False):
+        from classfox.downloads import digest_matches
+        from classfox.model_catalog import CATALOG, runtime_asset
+        from classfox.model_packages import bundled_assets
+
+        for asset in [CATALOG["sensevoice-small"].files[-1], runtime_asset()]:
+            if not digest_matches(bundled_assets() / asset.filename, asset):
+                failures[asset.filename] = "BundledAssetIntegrityError"
     print(json.dumps({"status": "failed" if failures else "ready", "platform": sys.platform, "architecture": platform.machine(), "failures": failures}))
     return 1 if failures else 0

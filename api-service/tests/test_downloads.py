@@ -26,6 +26,76 @@ async def test_download_checks_digest_and_only_promotes_complete_file(tmp_path: 
     assert not destination.with_suffix(".bin.partial").exists()
 
 
+async def test_retry_resumes_after_connection_failure(tmp_path: Path) -> None:
+    payload = b"complete-model"
+    calls: list[str] = []
+    destination = tmp_path / "model.bin"
+    destination.with_suffix(".bin.partial").write_bytes(payload[:4])
+
+    def provider(request: httpx.Request) -> httpx.Response:
+        calls.append(request.headers["range"])
+        if len(calls) == 1:
+            raise httpx.ConnectTimeout("synthetic timeout", request=request)
+        return httpx.Response(206, content=payload[4:], headers={"content-range": f"bytes 4-{len(payload) - 1}/{len(payload)}"})
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(provider)) as client:
+        await download_asset(client, asset(payload), destination, lambda count: None)
+    assert calls == ["bytes=4-", "bytes=4-"]
+    assert destination.read_bytes() == payload
+
+
+async def test_fallback_rejects_wrong_bytes_and_uses_next_source(tmp_path: Path) -> None:
+    payload = b"complete-model"
+    observed: list[str] = []
+
+    def provider(request: httpx.Request) -> httpx.Response:
+        observed.append(request.url.host)
+        return httpx.Response(200, content=b"x" * len(payload) if request.url.host == "mirror.example" else payload)
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(provider)) as client:
+        await download_asset(
+            client, asset(payload), tmp_path / "model.bin", lambda count: None, sources=("https://mirror.example/model.bin", "https://models.example/model.bin")
+        )
+    assert observed == ["mirror.example", "models.example"]
+    assert (tmp_path / "model.bin").read_bytes() == payload
+
+
+async def test_http_failure_reports_file_host_and_status_without_query_secrets(tmp_path: Path) -> None:
+    async with httpx.AsyncClient(transport=httpx.MockTransport(lambda request: httpx.Response(403))) as client:
+        with pytest.raises(DownloadError, match=r"model.bin.*models.example.*403") as error:
+            await download_asset(
+                client, asset(b"model"), tmp_path / "model.bin", lambda count: None, sources=("https://models.example/model.bin?token=synthetic-secret",)
+            )
+    assert "synthetic-secret" not in str(error.value)
+
+
+async def test_corrupt_partial_from_mirror_restarts_on_healthy_origin(tmp_path: Path) -> None:
+    payload = b"m" * (128 * 1024)
+    seen: list[tuple[str, str | None]] = []
+
+    class BrokenBody(httpx.AsyncByteStream):
+        async def __aiter__(self) -> AsyncIterator[bytes]:
+            yield b"x" * 65536
+            raise httpx.ReadError("synthetic interrupted mirror")
+
+    def provider(request: httpx.Request) -> httpx.Response:
+        seen.append((request.url.host, request.headers.get("range")))
+        if request.url.host == "mirror.example":
+            if request.headers.get("range"):
+                raise httpx.ConnectError("synthetic unavailable mirror")
+            return httpx.Response(200, stream=BrokenBody())
+        if request.headers.get("range"):
+            return httpx.Response(206, content=payload[65536:], headers={"content-range": f"bytes 65536-{len(payload) - 1}/{len(payload)}"})
+        return httpx.Response(200, content=payload)
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(provider)) as client:
+        await download_asset(
+            client, asset(payload), tmp_path / "model.bin", lambda count: None, sources=("https://mirror.example/model.bin", "https://models.example/model.bin")
+        )
+    assert seen[-2:] == [("models.example", "bytes=65536-"), ("models.example", None)]
+    assert (tmp_path / "model.bin").read_bytes() == payload
+
+
 async def test_wrong_digest_never_replaces_existing_install(tmp_path: Path) -> None:
     destination = tmp_path / "model.bin"
     destination.write_bytes(b"previous-working-model")

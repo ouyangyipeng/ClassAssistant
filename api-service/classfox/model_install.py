@@ -13,9 +13,11 @@ from uuid import uuid4
 import httpx
 from pydantic import BaseModel
 
+from classfox.download_sources import download_sources
 from classfox.downloads import Asset, DownloadError, digest_matches, download_asset, unpack_archive
 from classfox.events import Event, EventBus
 from classfox.model_catalog import CATALOG, ModelDefinition, runtime_asset
+from classfox.model_packages import bundled_assets, import_asset, validate_package
 
 logger = logging.getLogger(__name__)
 ModelProbe = Callable[[ModelDefinition, Path], Awaitable[None]]
@@ -116,13 +118,19 @@ class ModelInstaller:
         return None
 
     def start(self, model_id: str) -> Installation:
+        return self._start(model_id)
+
+    def start_import(self, model_id: str, package: Path) -> Installation:
+        return self._start(model_id, package)
+
+    def _start(self, model_id: str, package: Path | None = None) -> Installation:
         definition = self._definition(model_id)
         if model_id in self._tasks:
             return self.status(model_id)
         assets = self._assets(definition)
         state = Installation(model_id=model_id, status="verifying", total_bytes=sum(asset.size for asset in assets), message="正在检查安装状态")
         self._states[model_id] = state
-        task = asyncio.create_task(self._install(definition, state), name=f"install-{model_id}")
+        task = asyncio.create_task(self._install(definition, state, package), name=f"install-{model_id}")
         self._tasks[model_id] = task
         task.add_done_callback(lambda _task: self._tasks.pop(model_id, None))
         self._publish(state)
@@ -151,7 +159,7 @@ class ModelInstaller:
     def _publish(self, state: Installation) -> None:
         self.events.publish("desktop", Event(type="model.installation", data=state.model_dump(mode="json")))
 
-    async def _install(self, definition: ModelDefinition, state: Installation) -> None:
+    async def _install(self, definition: ModelDefinition, state: Installation, package: Path | None = None) -> None:
         staging: Path | None = None
         try:
             if (existing := self.installed_path(definition.id)) and await disk_operation(self._verify, definition, existing):
@@ -161,7 +169,9 @@ class ModelInstaller:
             self.root.mkdir(parents=True, exist_ok=True, mode=0o700)
             if shutil.disk_usage(self.root).free < state.total_bytes * 2 + 256 * 1024**2:
                 raise DownloadError("磁盘空间不足，需为下载和安装预留约两倍模型大小及运行库空间")
-            files = await self._download(definition, state)
+            if package is not None:
+                await disk_operation(validate_package, package, list(definition.files))
+            files = await self._download(definition, state, package)
             staging = self.root / "installed" / uuid4().hex
             staging.mkdir(parents=True, mode=0o700)
             for artifact, source in files:
@@ -191,8 +201,9 @@ class ModelInstaller:
                     state.message += "；临时文件清理失败，请检查目录权限"
             self._publish(state)
 
-    async def _download(self, definition: ModelDefinition, state: Installation) -> list[tuple[Asset, Path]]:
-        state.status, state.message = "downloading", "正在下载模型与运行库"
+    async def _download(self, definition: ModelDefinition, state: Installation, package: Path | None = None) -> list[tuple[Asset, Path]]:
+        state.status = "downloading"
+        state.message = "正在导入离线模型并校验" if package else "正在下载模型；网络中断将自动重试"
         files: list[tuple[Asset, Path]] = []
         completed = 0
         last_update = 0.0
@@ -207,7 +218,16 @@ class ModelInstaller:
 
         for asset in self._assets(definition):
             path = self.root / "downloads" / asset.sha256 / asset.filename
-            await download_asset(self._client, asset, path, progress)
+            bundled = bundled_assets() / asset.filename
+            if await disk_operation(digest_matches, bundled, asset):
+                path = bundled
+            elif package is not None:
+                if asset not in definition.files:
+                    raise DownloadError("应用附带的问答运行库缺失或损坏，请重新安装当前平台的应用")
+                await disk_operation(import_asset, package, asset, path)
+            else:
+                await download_asset(self._client, asset, path, progress, sources=download_sources(asset))
+            progress(asset.size)
             files.append((asset, path))
             completed += asset.size
         return files

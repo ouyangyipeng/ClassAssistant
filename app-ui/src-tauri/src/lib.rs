@@ -95,6 +95,27 @@ fn set_window_mode(
 }
 
 #[tauri::command]
+async fn choose_model_package(app: tauri::AppHandle) -> Result<Option<String>, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let selected = app
+            .dialog()
+            .file()
+            .set_title("选择 ClassFox 离线模型包")
+            .add_filter("ClassFox 离线模型包", &["zip"])
+            .blocking_pick_file();
+        selected
+            .map(|file| {
+                file.into_path()
+                    .map(|path| path.to_string_lossy().into_owned())
+                    .map_err(|_| "请选择本机 ZIP 文件".to_string())
+            })
+            .transpose()
+    })
+    .await
+    .map_err(|_| "无法打开模型包选择窗口".to_string())?
+}
+
+#[tauri::command]
 async fn export_text(
     app: tauri::AppHandle,
     content: String,
@@ -146,6 +167,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             backend_connection,
             set_window_mode,
+            choose_model_package,
             export_text
         ])
         .build(tauri::generate_context!())
