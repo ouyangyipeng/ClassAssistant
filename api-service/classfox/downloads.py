@@ -1,5 +1,6 @@
 import asyncio
 import hashlib
+import logging
 import os
 import re
 import shutil
@@ -12,6 +13,8 @@ from urllib.parse import urlsplit
 
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+logger = logging.getLogger(__name__)
 
 
 class DownloadError(Exception):
@@ -41,7 +44,9 @@ def digest_matches(path: Path, asset: Asset) -> bool:
         return hashlib.file_digest(source, "sha256").hexdigest() == asset.sha256
 
 
-async def download_asset(client: httpx.AsyncClient, asset: Asset, destination: Path, progress: Callable[[int], None]) -> None:
+async def download_asset(
+    client: httpx.AsyncClient, asset: Asset, destination: Path, progress: Callable[[int], None], *, sources: tuple[str, ...] | None = None
+) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
     if await asyncio.to_thread(digest_matches, destination, asset):
         progress(asset.size)
@@ -57,21 +62,51 @@ async def download_asset(client: httpx.AsyncClient, asset: Asset, destination: P
         offset = 0
     if shutil.disk_usage(destination.parent).free < asset.size - offset + 16 * 1024**2:
         raise DownloadError("磁盘空间不足，请释放空间后重试")
-    try:
-        await _receive(client, asset, partial, offset, progress)
-    except httpx.HTTPError as exc:
-        raise DownloadError("模型下载中断，请检查网络后重试；已下载部分会保留") from exc
-    if not await asyncio.to_thread(digest_matches, partial, asset):
-        partial.unlink(missing_ok=True)
-        raise DownloadError("模型完整性校验失败，未启用该文件；请重试下载")
-    os.replace(partial, destination)
+    reason = "下载源不可用"
+    for url in sources or (asset.url,):
+        candidate = asset.model_copy(update={"url": Asset.https_only(url)})
+        host = urlsplit(url).hostname
+        for attempt in range(2):
+            try:
+                offset = partial.stat().st_size if partial.exists() else 0
+                if offset < asset.size:
+                    await _receive(client, candidate, partial, offset, progress)
+                if not await asyncio.to_thread(digest_matches, partial, asset):
+                    partial.unlink(missing_ok=True)
+                    raise DownloadError("文件完整性校验失败")
+                os.replace(partial, destination)
+                progress(asset.size)
+                return
+            except httpx.HTTPError as error:
+                reason = f"{asset.filename}（{host}）：{network_reason(error)}"
+                logger.warning("Download failed: file=%s host=%s category=%s", asset.filename, host, type(error).__name__)
+                if isinstance(error, httpx.HTTPStatusError) and error.response.status_code not in {408, 429, 500, 502, 503, 504}:
+                    break
+                if attempt == 0:
+                    await asyncio.sleep(1)
+            except DownloadError as error:
+                reason = f"{asset.filename}（{host}）：{error}"
+                if attempt == 0 and offset > 0 and not partial.exists():
+                    continue
+                break
+    raise DownloadError(f"{reason}；可重试续传，或导入离线模型包")
+
+
+def network_reason(error: httpx.HTTPError) -> str:
+    if isinstance(error, httpx.HTTPStatusError):
+        return f"服务器返回 HTTP {error.response.status_code}"
+    if isinstance(error, httpx.TimeoutException):
+        return "连接或读取超时"
+    if isinstance(error, httpx.ConnectError):
+        return "无法建立安全连接，请检查网络或代理"
+    return "网络连接中断"
 
 
 async def _receive(client: httpx.AsyncClient, asset: Asset, partial: Path, offset: int, progress: Callable[[int], None]) -> None:
     headers = {"Accept-Encoding": "identity"}
     if offset:
         headers["Range"] = f"bytes={offset}-"
-    async with client.stream("GET", asset.url, headers=headers, follow_redirects=True, timeout=httpx.Timeout(30, connect=10)) as response:
+    async with client.stream("GET", asset.url, headers=headers, follow_redirects=True, timeout=httpx.Timeout(60, connect=15)) as response:
         response.raise_for_status()
         if response.url.scheme != "https":
             raise DownloadError("下载被重定向到不安全地址，已停止")
@@ -93,6 +128,8 @@ async def _receive(client: httpx.AsyncClient, asset: Asset, partial: Path, offse
                 progress(offset)
             output.flush()
             os.fsync(output.fileno())
+        if offset < asset.size:
+            raise httpx.ReadError("Incomplete model transfer", request=response.request)
 
 
 def safe_member(name: str) -> PurePosixPath:

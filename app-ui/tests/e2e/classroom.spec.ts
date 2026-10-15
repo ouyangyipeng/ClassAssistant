@@ -17,6 +17,56 @@ async function addText(page: Page, text: string) {
   await expect(page.locator(".transcript-entry").last()).toContainText(text);
 }
 
+test("offline import uses the native picker path and reports a real package validation failure", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(page.getByText("本地服务已连接")).toBeVisible();
+  await page.getByRole("button", { name: "设置与模型" }).click();
+  await expect(
+    page.getByRole("heading", { name: "模型在你的电脑上运行" }),
+  ).toBeVisible();
+  await page.evaluate(() => {
+    Object.defineProperty(window, "__TAURI_INTERNALS__", {
+      configurable: true,
+      value: {
+        metadata: {
+          currentWindow: { label: "main" },
+          currentWebview: { label: "main", windowLabel: "main" },
+        },
+        invoke: async (command: string) => {
+          if (command === "plugin:window|set_always_on_top") return;
+          if (command !== "choose_model_package")
+            throw new Error(`Unexpected native command: ${command}`);
+          return "/synthetic-missing-classfox-model.zip";
+        },
+      },
+    });
+  });
+  const request = page.waitForRequest(
+    "**/api/v2/models/sensevoice-small/import",
+  );
+  await page
+    .getByRole("button", {
+      name: "导入 SenseVoiceSmall INT8 离线包",
+      exact: true,
+    })
+    .click();
+  expect((await request).postDataJSON()).toEqual({
+    path: "/synthetic-missing-classfox-model.zip",
+  });
+  await expect(page.locator(".model-row").first()).toContainText(
+    "请选择本机的 ClassFox 离线模型 ZIP 包",
+  );
+  await expect(
+    page
+      .locator(".model-row")
+      .first()
+      .getByRole("button", { name: "重试安装" }),
+  ).toBeEnabled();
+  await page.screenshot({ path: "test-results/offline-model-import.png" });
+});
+
 test("classroom flow keeps original text through streaming, notes, reload and export", async ({
   page,
 }) => {

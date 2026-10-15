@@ -12,6 +12,7 @@ identity = os.environ.get("APPLE_SIGNING_IDENTITY")
 if identity == "-":
     identity = None
 datas = copy_metadata("keyring") + collect_data_files("sherpa_onnx", includes=["*.txt", "*.json"])
+datas += [(str(root / "model-assets"), "model-assets")]
 binaries = collect_dynamic_libs("sherpa_onnx")
 hiddenimports = collect_submodules("uvicorn") + [
     "speech_recognition.recognizers.google",

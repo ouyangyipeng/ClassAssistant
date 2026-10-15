@@ -1,7 +1,8 @@
 from collections.abc import Awaitable, Callable
+from pathlib import Path
 
 from fastapi import APIRouter, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from classfox.model_catalog import ModelDefinition
 from classfox.model_install import Installation, ModelInstaller
@@ -11,6 +12,10 @@ from classfox.model_process import ModelEndpoint, OwnedModelProcess
 class ModelInfo(BaseModel):
     model: ModelDefinition
     installation: Installation
+
+
+class ModelImport(BaseModel):
+    path: str = Field(min_length=1, max_length=4096)
 
 
 def model_routes() -> APIRouter:
@@ -25,6 +30,11 @@ def model_routes() -> APIRouter:
     async def install(request: Request, model_id: str) -> Installation:
         installer: ModelInstaller = request.app.state.models
         return installer.start(model_id)
+
+    @router.post("/{model_id}/import", status_code=202)
+    async def import_package(request: Request, model_id: str, source: ModelImport) -> Installation:
+        installer: ModelInstaller = request.app.state.models
+        return installer.start_import(model_id, Path(source.path))
 
     @router.get("/runtime")
     async def runtime(request: Request) -> dict[str, object]:

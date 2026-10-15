@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { Check, Cpu, Download, LoaderCircle, Mic, Play, X } from "lucide-react";
+import {
+  Check,
+  Cpu,
+  Download,
+  FolderOpen,
+  LoaderCircle,
+  Mic,
+  Play,
+  X,
+} from "lucide-react";
 import type { ModelInfo, Preferences } from "./domain";
 import { fileSize } from "./primitives";
 import { WorkspaceStore } from "./store";
@@ -17,6 +26,18 @@ export function ModelSettings({
 }) {
   const [warming, setWarming] = useState(false);
   const [warm, setWarm] = useState(false);
+  const importPackage = (id: string) => {
+    void store.action(async () => {
+      if (!("__TAURI_INTERNALS__" in window))
+        throw new Error("请在 ClassFox 桌面应用中导入离线模型包");
+      const { invoke } = await import("@tauri-apps/api/core");
+      const path = await invoke<string | null>("choose_model_package");
+      if (path) {
+        await store.api.post(`/models/${id}/import`, { path });
+        await store.refresh();
+      }
+    });
+  };
   const install = (id: string, cancel: boolean) => {
     void store.action(async () => {
       await store.api.request(`/models/${id}/install`, {
@@ -31,6 +52,7 @@ export function ModelSettings({
         <h3>模型在你的电脑上运行</h3>
         <p>
           下载后无需联网处理课堂内容。第一次加载会稍慢，开始上课前可先准备问答模型。
+          问答模型优先从魔搭下载；也可以从官网下载离线模型包后导入。
         </p>
       </div>
       <div className="model-list">
@@ -91,26 +113,36 @@ export function ModelSettings({
                   />
                 )}
               </div>
-              <button
-                className={ready ? "button secondary" : "button"}
-                disabled={ready}
-                onClick={() => install(model.id, working)}
-              >
-                {ready ? (
-                  <Check size={16} />
-                ) : working ? (
-                  <X size={16} />
-                ) : (
-                  <Download size={16} />
-                )}
-                {ready
-                  ? "已安装"
-                  : working
-                    ? "取消"
-                    : installation.status === "failed"
-                      ? "重试安装"
-                      : "下载安装"}
-              </button>
+              <div className="model-actions">
+                <button
+                  className={ready ? "button secondary" : "button"}
+                  disabled={ready}
+                  onClick={() => install(model.id, working)}
+                >
+                  {ready ? (
+                    <Check size={16} />
+                  ) : working ? (
+                    <X size={16} />
+                  ) : (
+                    <Download size={16} />
+                  )}
+                  {ready
+                    ? "已安装"
+                    : working
+                      ? "取消"
+                      : installation.status === "failed"
+                        ? "重试安装"
+                        : "下载安装"}
+                </button>
+                <button
+                  className="button secondary"
+                  disabled={working || ready}
+                  aria-label={`导入 ${model.name} 离线包`}
+                  onClick={() => importPackage(model.id)}
+                >
+                  <FolderOpen size={16} /> 导入离线包
+                </button>
+              </div>
             </article>
           );
         })}
@@ -166,6 +198,8 @@ export function ModelSettings({
       <p className="field-help">
         下载需要互联网和额外的临时磁盘空间。安装包含文件校验与模型加载检查；具体速度取决于电脑性能。
         macOS 上的本地问答需要 13.3 或以上，较旧系统可选择 BYOK。
+        新版安装包已附带语音分段和问答运行库；离线包可在官网下载区的百度网盘中获取，选择对应模型的
+        ZIP 文件即可。
       </p>
     </section>
   );

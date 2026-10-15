@@ -24,6 +24,22 @@ async def test_catalog_reports_uninstalled_models_without_starting_downloads(cli
     assert start.json()["error"] == "local_model_unavailable"
 
 
+async def test_offline_import_is_authenticated_and_reports_invalid_package(client: AsyncClient) -> None:
+    path = "/api/v2/models/sensevoice-small/import"
+    assert (await client.post(path, json={"path": "/missing.zip"}, headers={"Authorization": "Bearer wrong"})).status_code == 401
+    assert (await client.post(path, json={"path": ""})).status_code == 422
+    response = await client.post(path, json={"path": "/missing.zip"})
+    assert response.status_code == 202
+    async with asyncio.timeout(2):
+        while True:
+            catalog = (await client.get("/api/v2/models")).json()
+            state = next(item["installation"] for item in catalog if item["model"]["id"] == "sensevoice-small")
+            if state["status"] == "failed":
+                break
+            await asyncio.sleep(0.01)
+    assert "ZIP" in state["message"]
+
+
 async def test_missing_managed_model_has_actionable_job_error(client: AsyncClient) -> None:
     preferences = (await client.get("/api/v2/settings")).json()
     preferences["llm"]["managed"] = True

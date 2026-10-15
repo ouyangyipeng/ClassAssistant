@@ -70,6 +70,7 @@ def main() -> int:
             SERVICE,
         )
         python = SERVICE / ".venv" / ("Scripts/python.exe" if sys.platform == "win32" else "bin/python")
+        run([str(python), str(ROOT / "scripts" / "model_assets.py")], ROOT)
         run([str(python), "-m", "PyInstaller", "--noconfirm", "classfox.spec"], SERVICE)
         backend = SERVICE / "dist" / "classfox-service" / ("classfox-service.exe" if sys.platform == "win32" else "classfox-service")
         run([str(backend), "--self-check"], ROOT)

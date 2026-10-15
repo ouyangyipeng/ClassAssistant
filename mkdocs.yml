@@ -41,6 +41,7 @@ nav:
   - 使用:
       - 首次使用: user-guide/quickstart.md
       - 课堂工作流: user-guide/features.md
+      - 国内下载与离线模型: user-guide/offline-models.md
       - 升级与迁移: user-guide/migration.md
       - 微信小程序: user-guide/wechat.md
       - 常见问题: user-guide/faq.md

@@ -1441,7 +1441,12 @@ details .secret-field + .secret-field {
   font-size: 10px;
   margin-top: 9px;
 }
-.model-row > .button {
+.model-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.model-actions > .button {
   font-size: 11px;
   padding: 6px 10px;
   min-height: 33px;
@@ -1686,8 +1691,9 @@ details .secret-field + .secret-field {
     gap: 8px;
     flex-wrap: wrap;
   }
-  .model-row > .button {
+  .model-actions {
     margin-left: auto;
+    flex-direction: row;
   }
   .welcome-steps {
     gap: 15px;
