@@ -54,3 +54,15 @@ def test_symlink_entry_is_rejected(tmp_path: Path) -> None:
         archive.writestr(link, b"model")
     with pytest.raises(DownloadError, match="链接"):
         validate_package(package, [asset(b"model")])
+
+
+def test_import_reports_incremental_progress_before_completion(tmp_path: Path) -> None:
+    payload = b"m" * (3 * 1024**2)
+    package = tmp_path / "model.zip"
+    with zipfile.ZipFile(package, "w") as archive:
+        archive.writestr("model.bin", payload)
+    updates: list[int] = []
+    destination = tmp_path / "cached" / "model.bin"
+    import_asset(package, asset(payload), destination, updates.append)
+    assert updates == [1024**2, 2 * 1024**2, 3 * 1024**2]
+    assert destination.read_bytes() == payload

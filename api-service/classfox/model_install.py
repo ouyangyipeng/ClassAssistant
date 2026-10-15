@@ -207,6 +207,7 @@ class ModelInstaller:
         files: list[tuple[Asset, Path]] = []
         completed = 0
         last_update = 0.0
+        loop = asyncio.get_running_loop()
 
         def progress(count: int) -> None:
             nonlocal last_update
@@ -216,6 +217,9 @@ class ModelInstaller:
                 self._publish(state)
                 last_update = now
 
+        def import_progress(count: int) -> None:
+            loop.call_soon_threadsafe(progress, count)
+
         for asset in self._assets(definition):
             path = self.root / "downloads" / asset.sha256 / asset.filename
             bundled = bundled_assets() / asset.filename
@@ -224,7 +228,7 @@ class ModelInstaller:
             elif package is not None:
                 if asset not in definition.files:
                     raise DownloadError("应用附带的问答运行库缺失或损坏，请重新安装当前平台的应用")
-                await disk_operation(import_asset, package, asset, path)
+                await disk_operation(import_asset, package, asset, path, import_progress)
             else:
                 await download_asset(self._client, asset, path, progress, sources=download_sources(asset))
             progress(asset.size)

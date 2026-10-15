@@ -47,7 +47,7 @@
 | :---: | :---: | :---: |
 | [**下载 DMG ↗**](https://github.com/ouyangyipeng/ClassAssistant/releases/download/v2.1.0/ClassFox_2.1.0_aarch64.dmg) | [**下载 DMG ↗**](https://github.com/ouyangyipeng/ClassAssistant/releases/download/v2.1.0/ClassFox_2.1.0_x64.dmg) | [**下载安装程序 ↗**](https://github.com/ouyangyipeng/ClassAssistant/releases/download/v2.1.0/ClassFox_2.1.0_x64-setup.exe) |
 
-国内网络建议使用[官网下载区](https://class.nexa-lang.com/#download)的百度网盘入口。2.1 支持魔搭问答模型下载与离线模型 ZIP 包导入；VAD 和平台运行库已随安装包附带。详见[国内下载与离线模型指南](https://class.nexa-lang.com/user-guide/offline-models/)。
+2.1 支持魔搭问答模型下载与离线模型 ZIP 包导入；VAD 和平台运行库已随安装包附带。百度网盘入口待文件上传并验证分享后加入[官网下载区](https://class.nexa-lang.com/#download)。详见[国内下载与离线模型指南](https://class.nexa-lang.com/user-guide/offline-models/)。
 | M 系列芯片 | Intel 芯片 | 64 位系统 |
 
 [发布说明与 SHA-256 校验和](https://github.com/ouyangyipeng/ClassAssistant/releases/latest) · [首次使用指南](https://class.nexa-lang.com/user-guide/quickstart/)
