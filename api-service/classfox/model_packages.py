@@ -3,6 +3,7 @@ import shutil
 import stat
 import sys
 import zipfile
+from collections.abc import Callable
 from pathlib import Path
 
 from classfox.downloads import Asset, DownloadError, digest_matches
@@ -42,7 +43,7 @@ def validate_package(package: Path, assets: list[Asset]) -> None:
         raise DownloadError("无法读取离线模型包，请重新下载完整 ZIP 文件") from error
 
 
-def import_asset(package: Path, asset: Asset, destination: Path) -> None:
+def import_asset(package: Path, asset: Asset, destination: Path, progress: Callable[[int], None] | None = None) -> None:
     if digest_matches(destination, asset):
         return
     destination.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
@@ -57,6 +58,8 @@ def import_asset(package: Path, asset: Asset, destination: Path) -> None:
                 if remaining < 0:
                     raise DownloadError("离线模型文件超过预期大小")
                 output.write(chunk)
+                if progress is not None:
+                    progress(asset.size - remaining)
             output.flush()
             os.fsync(output.fileno())
         if not digest_matches(partial, asset):
