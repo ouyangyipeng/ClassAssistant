@@ -4,11 +4,11 @@ ClassFox 2.1.1 的语音识别与问答模型均优先使用魔搭 ModelScope �
 
 ## 在 App 内安装（推荐）
 
-1. 安装自己电脑对应的 2.1.1 应用，入口见[官网下载区](https://class.nexa-lang.com/#download)。
+1. 从[百度网盘可订阅目录](https://pan.baidu.com/s/5Wc6Xt2IZ9ehisotPnstGow)或[官网下载区](https://class.nexa-lang.com/#download)获取自己电脑对应的 2.1.1 安装包并安装。
 2. 打开“设置与模型 → 本地模型”，分别点击语音和问答模型的“下载安装”。
 3. 等待文件校验和加载检查完成，再点击“使用本地语音与问答”。
 
-语音文件来自魔搭的 [gomodels/sherpa](https://modelscope.cn/models/gomodels/sherpa)，问答文件来自 [unsloth/Qwen3.5-4B-GGUF](https://modelscope.cn/models/unsloth/Qwen3.5-4B-GGUF)。两者都是上游模型的分发副本，应用只接受固定提交和匹配哈希的文件。原始源作为备用；VAD 与平台运行库已内置，无需额外下载。网盘仅用于分发安装包，分享入口待实际上传后加入。
+语音文件来自魔搭的 [gomodels/sherpa](https://modelscope.cn/models/gomodels/sherpa)，问答文件来自 [unsloth/Qwen3.5-4B-GGUF](https://modelscope.cn/models/unsloth/Qwen3.5-4B-GGUF)。两者都是上游模型的分发副本，应用只接受固定提交和匹配哈希的文件。原始源作为备用；VAD 与平台运行库已内置，无需额外下载。网盘仅用于分发安装包，可按百度网盘提供的方式订阅该目录。
 
 ## 已有离线包时导入
 

@@ -704,6 +704,16 @@ details p a {
   color: #b7bdb5;
   margin-bottom: 45px;
 }
+.download-domestic {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.download-domestic p {
+  margin-top: 14px;
+  font-size: 12px;
+  line-height: 1.9;
+  color: #bec6b9;
+}
 .download-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

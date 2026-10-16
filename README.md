@@ -43,12 +43,15 @@
 
 ## 从下一堂课开始
 
+**国内下载：[百度网盘（可订阅目录）](https://pan.baidu.com/s/5Wc6Xt2IZ9ehisotPnstGow)**。提供 Windows 与 macOS 安装包，语音和问答模型直接在 App 内从魔搭下载。
+
 | macOS · Apple Silicon | macOS · Intel | Windows · x64 |
 | :---: | :---: | :---: |
 | [**下载 DMG ↗**](https://github.com/ouyangyipeng/ClassAssistant/releases/download/v2.1.1/ClassFox_2.1.1_aarch64.dmg) | [**下载 DMG ↗**](https://github.com/ouyangyipeng/ClassAssistant/releases/download/v2.1.1/ClassFox_2.1.1_x64.dmg) | [**下载安装程序 ↗**](https://github.com/ouyangyipeng/ClassAssistant/releases/download/v2.1.1/ClassFox_2.1.1_x64-setup.exe) |
 
-2.1.1 的语音与问答模型均优先从魔搭固定版本下载，直接在 App 内点击安装；VAD 和平台运行库已随安装包附带。网盘仅分发安装包，入口待实际上传和分享验证后加入[官网下载区](https://class.nexa-lang.com/#download)。详见[国内下载与离线模型指南](https://class.nexa-lang.com/user-guide/offline-models/)。
 | M 系列芯片 | Intel 芯片 | 64 位系统 |
+
+2.1.1 的语音与问答模型均优先从魔搭固定版本下载，直接在 App 内点击安装；VAD 和平台运行库已随安装包附带。详见[国内下载与离线模型指南](https://class.nexa-lang.com/user-guide/offline-models/)。
 
 [发布说明与 SHA-256 校验和](https://github.com/ouyangyipeng/ClassAssistant/releases/latest) · [首次使用指南](https://class.nexa-lang.com/user-guide/quickstart/)
 
