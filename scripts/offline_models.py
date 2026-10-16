@@ -62,5 +62,5 @@ async def prepare(destination: Path) -> None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", type=Path, default=ROOT / "release" / "v2.1.0" / "ClassFox-2.1.0")
+    parser.add_argument("--output", type=Path, default=ROOT / "release" / "v2.1.1" / "ClassFox-2.1.1")
     asyncio.run(prepare(parser.parse_args().output.resolve()))

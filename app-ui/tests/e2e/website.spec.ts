@@ -25,7 +25,7 @@ test("product page previews follow keyboard selection and retain download links"
   for (const link of await page.locator(".download-card").all()) {
     await expect(link).toHaveAttribute(
       "href",
-      /^https:\/\/github\.com\/ouyangyipeng\/ClassAssistant\/releases\/download\/v2\.1\.0\/ClassFox_2\.1\.0_/,
+      /^https:\/\/github\.com\/ouyangyipeng\/ClassAssistant\/releases\/download\/v2\.1\.1\/ClassFox_2\.1\.1_/,
     );
   }
   await page.getByRole("link", { name: "ClassFox 首页", exact: true }).click();
