@@ -4,7 +4,7 @@
 
 ## 在新电脑恢复开发
 
-准备 Python 3.12、uv、Node.js 24、pnpm 12.4.2 和 Rust；平台编译工具见[环境准备](environment.md)。随后执行：
+准备 Python 3.12、uv、Node.js 24、pnpm 12.4.2 和 Rust；平台编译工具见[环境准备](environment.md)。Intel Mac 需先运行 `brew install openssl@3`，供锁定的 cryptography 依赖源码构建使用。随后执行：
 
 ```bash
 git clone https://github.com/ouyangyipeng/ClassAssistant.git
