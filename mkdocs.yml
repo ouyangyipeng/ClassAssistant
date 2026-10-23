@@ -48,6 +48,7 @@ nav:
   - 开发:
       - 环境准备: getting-started/environment.md
       - 开发与验证: getting-started/development.md
+      - 换机恢复与交接: getting-started/recovery.md
       - 打包与发布: getting-started/packaging.md
       - 官网与品牌: getting-started/website.md
       - 系统架构: project/architecture.md
