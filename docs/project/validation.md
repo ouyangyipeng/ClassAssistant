@@ -1,5 +1,20 @@
 # 验证范围
 
+## 2.1.1 发布与换机复查
+
+复查日期：2026-10-23；源码基线 `6c71657`，应用发布 tag 为 `v2.1.1`（`aa7921b`）。该基线的[三平台 CI](https://github.com/ouyangyipeng/ClassAssistant/actions/runs/38866058139)与[官网部署](https://github.com/ouyangyipeng/ClassAssistant/actions/runs/38866113534)均成功，公开 Release 保留三个安装包与 SHA-256 清单，本地安装包哈希与线上清单一致。
+
+- 后端完整回归 202 项、桌面前端 22 项、微信预览单元测试 36 项通过；三平台原生构建和冻结后端检查通过。
+- 2.1.1 语音文件从魔搭固定提交完整下载，权重、词表和许可的大小与 SHA-256 匹配原始清单；请求实际经过 `modelscope.cn` 和 `cdn-lfs-cn-1.modelscope.cn`。公开中文样本与原始文件的推理输出一致。
+- Apple Silicon 最终 DMG 的版本、镜像完整性、签名完整性、内置 VAD/运行包哈希和冻结后端自检通过。
+- 网盘入口使用维护者提供的可订阅目录，官网仍保留三平台 GitHub 直接下载；课堂数据和凭据不作为公开发布内容。
+
+换机演练在同一台 macOS arm64 电脑的独立 GitHub 新克隆中进行：按锁文件重建 Python、桌面前端与微信预览依赖，后端 202 项测试、前端 22 项测试、10 个 Edge 浏览器场景、微信 36 项单元测试、两个构建产物检查、一次 Python/Node 实际回环互通及生产构建通过；官网严格构建通过。具体恢复步骤见[换机恢复与项目交接](../getting-started/recovery.md)。
+
+历史 issue #3、#6、#9、#12 仍开放，签名公证、真实课堂准确率、不同服务商延迟和系统输入法需求继续按[维护记录](maintenance.md)跟进。微信真机与上架验收仍属于 v2.5。
+
+## 2.0 历史验证
+
 记录日期：2026-09-23。v2.0 应用代码 `85b1bff` 的[三平台 CI 全部通过](https://github.com/ouyangyipeng/ClassAssistant/actions/runs/35791742606)，发布审查见 [PR #13](https://github.com/ouyangyipeng/ClassAssistant/pull/13)。完整持续记录在仓库 `plan/progress.md`；下面明确区分可复用证据和待验收项目。
 
 | 层级 | 已有证据 | 尚未覆盖 |

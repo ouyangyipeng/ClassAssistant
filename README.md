@@ -55,6 +55,8 @@
 
 [发布说明与 SHA-256 校验和](https://github.com/ouyangyipeng/ClassAssistant/releases/latest) · [首次使用指南](https://class.nexa-lang.com/user-guide/quickstart/)
 
+开发者换机或重新接手项目，请按[换机恢复与项目交接](https://class.nexa-lang.com/getting-started/recovery/)重建环境；源码、依赖锁文件、品牌素材和构建流程均在仓库中维护。
+
 > **安装提示**：macOS 包使用 ad-hoc 签名，尚未完成 Developer ID 签名和公证；Windows 包未使用商业代码签名，可能出现系统安全或信誉提示。请从本项目发布页下载并核对校验和。模型在应用内另行下载，不随安装包内置。
 
 **01 · 选择模型**　在「设置 → 本地模型」安装离线模型，或配置自己的语音识别与问答服务。
