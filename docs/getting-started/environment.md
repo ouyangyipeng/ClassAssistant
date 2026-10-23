@@ -2,7 +2,7 @@
 
 桌面栈为 Python 3.12 + uv、Node.js 22+ + pnpm 12.4.2、Rust + Tauri 2。当前本机验证使用 macOS arm64、Python 3.12.13 和 Node.js 24；其他目标需要独立原生构建。
 
-- macOS：安装 Xcode Command Line Tools 和对应 Rust 工具链。
+- macOS：安装 Xcode Command Line Tools 和对应 Rust 工具链。Intel Mac 还需先通过 Homebrew 执行 `brew install openssl@3`，再运行 `uv sync`；锁定的 cryptography 50.0.1 在该架构需要源码构建，仓库已配置静态链接 OpenSSL，详见[打包说明](packaging.md)。
 - Windows x64：安装 Visual Studio C++ Build Tools、Windows SDK 与 WebView2。
 - 具体系统依赖按 [Tauri 官方要求](https://v2.tauri.app/start/prerequisites/) 安装。
 - Python 环境由 `uv sync --locked --extra audio --extra bundle` 在 `api-service/.venv` 中管理；不使用 conda。
